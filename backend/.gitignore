@@ -1,0 +1,41 @@
+# Dependências
+node_modules/
+jspm_packages/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Variáveis de ambiente e segredos
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Builds e temporários
+dist
+build
+.cache
+.parcel-cache
+.tmp
+
+# Cobertura de testes
+coverage
+
+# IDEs e editores
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Sistemas operacionais
+.DS_Store
+Thumbs.db
