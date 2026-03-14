@@ -1,0 +1,135 @@
+:root {
+    --cor-principal: #052364;
+    --cor-container: #FFFFFF;
+    --cor-button-hover: #0084D5;
+    --cor-texto-header: #f3f3f3;
+    --cor-texto: #4B4B4B;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+.header {
+    display: flex;
+    background-color: var(--cor-principal);
+    color: var(--cor-texto-header);
+    padding: 20px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 450px;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(23, 23, 23, 0.1);
+  background: var(--cor-container);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.formulario h2 {
+    text-align: center;
+    font-size: 30px;
+    color: var(--cor-principal);
+}
+
+.formulario label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.formulario input[type="email"],
+.formulario input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  margin-bottom: 20px;
+}
+
+.formulario input[type="email"]:focus,
+.formulario input[type="password"]:focus {
+  border-color: var(--cor-principal);
+  cursor: pointer;
+}
+
+.opcoesLogin{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  font-size:13px;
+}
+
+.lembrar{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.lembrar label{
+  font-size:13px;
+  color: var(--cor-texto);
+  margin-top: 5px;
+}
+
+.esqueceuSenha a{
+  font-size:13px;
+  color:var(--cor-button-hover);
+  text-decoration:none;
+  transition:0.2s;
+  margin-top: 5px;
+}
+
+.esqueceuSenha a:hover{
+  color: var(--cor-principal);
+  text-decoration:underline;
+}
+
+.formulario button[type="submit"] {
+  width: 100%;
+  padding: 11px;
+  background: var(--cor-principal);
+  color: var(--cor-container);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.formulario button[type="submit"]:hover:not(:disabled) {
+  background: var(--cor-button-hover);
+}
+
+.formulario button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

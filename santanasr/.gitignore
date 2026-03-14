@@ -1,0 +1,55 @@
+# Dependências
+node_modules/
+
+# Build
+dist/
+build/
+dist-ssr/
+coverage/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Arquivos locais
+*.local
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Arquivos do Node
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# Vite
+vite.config.ts.timestamp*
+
+# Testes
+coverage/
