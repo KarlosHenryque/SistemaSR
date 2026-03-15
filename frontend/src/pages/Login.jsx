@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import './assets/css/Login.css'
+import Swal from "sweetalert2"
+import '../assets/css/Login.css'
 
 function Login() {
 
@@ -8,17 +9,92 @@ function Login() {
   const [lembreMe, setLembreMe] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e) {
+  useState(() => {
+    const emailSalvo = localStorage.getItem("email");
+    const lembrar = localStorage.getItem("lembrar");
+
+    if (lembrar == "true" && emailSalvo) {
+      setEmail(emailSalvo);
+      setLembreMe(true)
+    }
+
+  }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault()
 
     setLoading(true)
 
-    console.log("E-mail", email)
-    console.log("Senha", senha)
+    Swal.fire({
+      title: "Entrando...",
+      text: "Validando credenciais",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    })
 
-    alert("Login enviado")
+    try {
 
-    setLoading(false)
+      const resposta = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          senha
+        })
+      })
+
+      const dados = await resposta.json()
+
+      Swal.close()
+
+      if (!resposta.ok) {
+
+        await Swal.fire({
+          icon: "error",
+          title: "Erro no login",
+          text: dados.mensagem || "Erro ao realizar login"
+        })
+
+        return
+      }
+
+      localStorage.setItem("token", dados.token)
+
+       if (lembreMe) {
+        localStorage.setItem("email", email)
+        localStorage.setItem("lembrar", true)
+      } else {
+        localStorage.removeItem("email")
+        localStorage.removeItem("lembrar")
+      }
+
+      await Swal.fire({
+        icon: "success",
+        title: "Login realizado",
+        text: "Bem-vindo ao sistema",
+        timer: 2000,
+        showConfirmButton: false
+      })
+
+      window.location.href = "/AdminHome"
+
+    } catch (erro) {
+
+      Swal.close()
+
+      await Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não foi possível conectar ao servidor"
+      })
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   return(

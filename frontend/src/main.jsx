@@ -1,11 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Rotas from "./routes/rotas";
 
-// Rotas 
-import Login from './Login.jsx'
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Login />
-  </StrictMode>,
-)
+root.render(
+  <React.StrictMode>
+    <Rotas />
+  </React.StrictMode>
+);

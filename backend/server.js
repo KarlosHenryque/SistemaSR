@@ -9,9 +9,11 @@ app.use(express.json());
 
 // Importar rotas
 const login = require("./routes/login");
+const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
 
 // Utilizar rotas
 app.use("/login", login);
+app.use("/cadastrarUsuarios", cadastrarUsuarios);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
