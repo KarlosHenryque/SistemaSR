@@ -1,0 +1,77 @@
+:root {
+    --cor-principal: #052364;
+    --cor-container: #FFFFFF;
+    --cor-hover: #f3f3f3;
+    --cor-button-hover: #0084D5;
+    --cor-texto-header: #f3f3f3;
+    --cor-texto: #4B4B4B;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-admin {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+.header-admin {
+    display: flex;
+    background-color: var(--cor-principal);
+    color: var(--cor-texto-header);
+    padding: 25px;
+}
+
+.menu-admin{
+    display: flex;
+    gap: 30px;
+}
+
+.menu-item-admin{
+    position: relative;
+}
+
+.menu-title-admin{
+    background: transparent;
+    border: none;
+    color: var(--cor-texto-header);
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.menu-title-admin:hover{
+    color: var(--cor-texto);
+}
+
+.submenu-admin{
+    position: absolute;
+    top: 35px;
+    left: 0;
+    background: var(--cor-container);
+    list-style: none;
+    padding: 10px 0;
+    border-radius: 6px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    min-width: 150px;
+}
+
+.submenu-admin li{
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--cor-texto);
+}
+
+.submenu-admin li:hover{
+    background: var(--cor-hover);
+    color: var(--cor-button-hover);
+}
