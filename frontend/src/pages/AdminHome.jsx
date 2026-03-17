@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import LayoutAdmin from "../assets/components/LayoutAdmin";
+import "../assets/css/AdminHome.css"
 
 function AdminHome() {
-    return (
-        <h1>Ola </h1>
+
+  return (
+   <LayoutAdmin>
+      <h1>Ola seja bem vindo</h1>
+   </LayoutAdmin>
   )
 }
 
