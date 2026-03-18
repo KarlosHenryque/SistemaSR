@@ -9,10 +9,12 @@ app.use(express.json());
 
 // Importar rotas
 const login = require("./routes/login");
+const usuarios = require("./routes/usuarios");
 const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
 
 // Utilizar rotas
 app.use("/login", login);
+app.use("/usuarios", usuarios);
 app.use("/cadastrarUsuarios", cadastrarUsuarios);
 
 app.listen(PORT, () => {

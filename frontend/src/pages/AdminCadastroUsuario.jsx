@@ -1,5 +1,7 @@
 import Swal from "sweetalert2";
 import { useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "../assets/css/AdminCadastroUsuarios.css";
 import LayoutAdmin from "../assets/components/LayoutAdmin";
 
@@ -15,6 +17,9 @@ function AdminCadastroUsuarios() {
         ativo: true
     });
 
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
     function handleChange(e) {
         const { name, value } = e.target;
         setForm({
@@ -23,7 +28,7 @@ function AdminCadastroUsuarios() {
         });
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         if (!form.nome || !form.email || !form.senha) {
@@ -53,19 +58,68 @@ function AdminCadastroUsuarios() {
             return;
         }
 
-        Swal.fire({
-            icon: "success",
-            title: "Sucesso!",
-            text: "Usuário cadastrado com sucesso!"
-        });
+        try {
+            setLoading(true);
 
-        console.log("Usuário cadastrado:", form);
+            const response = await fetch("http://localhost:3000/cadastrarUsuarios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nome: form.nome,
+                    email: form.email,
+                    senha: form.senha,
+                    cpf_cnpj: form.documento,
+                    tipo_usuario: form.tipo,
+                    ativo: form.ativo
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Erro ao cadastrar usuário");
+            }
+
+            await Swal.fire({
+                icon: "success",
+                title: "Sucesso!",
+                text: "Usuário cadastrado com sucesso!"
+            });
+
+            navigate("/AdminHome");
+
+
+            setForm({
+                nome: "",
+                documento: "",
+                tipo: "",
+                email: "",
+                senha: "",
+                confirmarSenha: "",
+                ativo: true
+            });
+
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: error.message
+            });
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
         <LayoutAdmin>
             <div className="page-container">
                 <div className="form-container">
+                    <div className="close-button" onClick={() => navigate("/AdminHome")}>
+                        <FaTimes />
+                    </div>
+
                     <h1>Cadastro de Usuários</h1>
 
                     <form className="form-admin" onSubmit={handleSubmit}>
@@ -166,7 +220,9 @@ function AdminCadastroUsuarios() {
                             </span>
                         </div>
 
-                        <button type="submit">Cadastrar</button>
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Cadastrando..." : "Cadastrar"}
+                        </button>
 
                     </form>
                 </div>

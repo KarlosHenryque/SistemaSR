@@ -1,0 +1,121 @@
+:root {
+    --cor-principal: #052364;
+    --cor-secundaria: #0084D5;
+    --cor-fundo: #f5f7fa;
+    --cor-container: #ffffff;
+    --cor-texto: #4B4B4B;
+    --cor-texto-claro: #999;
+    --cor-texto-branco: #ffffff;
+    --cor-borda: #ccc;
+    --cor-borda-tabela: #ddd;
+    --cor-hover: #f3f3f3;
+    --cor-sombra: rgba(0, 0, 0, 0.1);
+}
+
+.page-container-listar {
+    min-height: 100vh;
+    background-color: var(--cor-fundo);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+.list-container-listar {
+    background: var(--cor-container);
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1000px;
+    position: relative;
+    box-shadow: 0px 4px 15px var(--cor-sombra);
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #999;
+    transition: 0.2s;
+}
+
+.close-button:hover {
+    color: #ff4d4d;
+}
+
+.list-container-listar h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--cor-principal);
+}
+
+.search-container-listar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-container-listar input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--cor-borda);
+}
+
+.search-container-listar button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: var(--cor-principal);
+    color: var(--cor-texto-branco);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.search-container-listar button:hover {
+    background: var(--cor-secundaria);
+}
+
+.table-users-listar {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-users-listar th {
+    background: var(--cor-principal);
+    color: var(--cor-texto-branco);
+    padding: 12px;
+    text-align: left;
+}
+
+.table-users-listar td {
+    padding: 10px;
+    border-bottom: 1px solid var(--cor-borda-tabela);
+    color: var(--cor-texto);
+}
+
+.btn-editar {
+    background: #052364;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-editar:hover {
+    background: #0084D5;
+}
+
+.table-users-listar tr:hover {
+    background: var(--cor-hover);
+}
+
+.no-data-listar {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--cor-texto-claro);
+}
