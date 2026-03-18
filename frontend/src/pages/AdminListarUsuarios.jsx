@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { useState } from "react"; // ✅ FALTAVA ISSO
+import { useState } from "react"; 
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/AdminListarUsuarios.css";
@@ -41,7 +41,12 @@ function AdminListarUsuarios() {
         const confirm = await Swal.fire({
             title: "Confirmar alteração?",
             icon: "question",
-            showCancelButton: true
+            showCancelButton: true,
+            reverseButtons: true,
+            confirmButtonText: "Salvar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#052364",
+            cancelButtonColor: "#ff4d4d",
         });
 
         if (!confirm.isConfirmed) return;

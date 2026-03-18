@@ -19,7 +19,18 @@ export async function editarUsuarioModal(user) {
                     <option value="industria">Indústria</option>
                 </select>
 
-                    <input id="swal-senha" type="password" class="swal-input-custom" placeholder="Senha">
+                <input id="swal-senha" type="password" class="swal-input-custom" placeholder="Senha">
+
+                <div class="status-container">
+                    <label>Status do usuário</label>
+
+                    <label class="switch">
+                        <input type="checkbox" id="swal-ativo">
+                        <span class="slider"></span>
+                    </label>
+
+                    <span id="status-text" class="status-text"></span>
+                </div>
             </div>
         `,
 
@@ -28,7 +39,20 @@ export async function editarUsuarioModal(user) {
             document.getElementById("swal-email").value = user.email;
             document.getElementById("swal-documento").value = user.cpf_cnpj;
             document.getElementById("swal-tipo").value = user.tipo_usuario;
-            document.getElementById("swal-senha").value = user.senha;
+            document.getElementById("swal-senha").value = user.senha || "";
+
+            const checkbox = document.getElementById("swal-ativo");
+            const statusText = document.getElementById("status-text");
+
+            checkbox.checked = user.status === true; 
+
+            const atualizarTexto = () => {
+                statusText.textContent = checkbox.checked ? "Ativo" : "Inativo";
+            };
+
+            atualizarTexto();
+
+            checkbox.addEventListener("change", atualizarTexto);
         },
 
         showCancelButton: true,
@@ -46,9 +70,10 @@ export async function editarUsuarioModal(user) {
                 cpf_cnpj: document.getElementById("swal-documento").value,
                 tipo_usuario: document.getElementById("swal-tipo").value,
                 senha: document.getElementById("swal-senha").value,
+                status: document.getElementById("swal-ativo").checked
             };
         }
     });
 
-    return formValues; 
+    return formValues;
 }
