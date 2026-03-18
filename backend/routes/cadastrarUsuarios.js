@@ -46,8 +46,18 @@ router.post("/", async (req, res) => {
       usuario: result.rows[0]
     });
 
-  } catch (err) {
-    console.error(err);
+    } catch (err) {
+      if (err.code === "23505" && err.constraint === "usuarios_cpf_cnpj_key") {
+      return res.status(409).json({
+        error: "CPF/CNPJ já cadastrado"
+      });
+    }
+
+    if (err.code === "23505" && err.constraint === "usuarios_email_key") {
+      return res.status(409).json({
+        error: "Email já cadastrado"
+      });
+    }
 
     res.status(500).json({
       error: "Erro ao criar usuário"

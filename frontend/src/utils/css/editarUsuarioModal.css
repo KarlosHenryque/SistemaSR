@@ -1,0 +1,40 @@
+.swal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.swal-input-custom {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    color: #000; 
+    background: #fff;
+    transition: 0.2s;
+}
+
+.swal-input-custom::placeholder {
+    color: #777;
+}
+
+.swal-input-custom:focus {
+    border-color: #052364;
+    box-shadow: 0 0 0 2px rgba(5, 35, 100, 0.2);
+}
+
+.swal-input-custom select {
+    cursor: pointer;
+}
+
+
+.swal2-title {
+    color: #000 !important;
+}
+
+.swal2-html-container {
+    color: #000 !important;
+}
