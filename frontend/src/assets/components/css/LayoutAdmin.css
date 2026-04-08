@@ -26,7 +26,7 @@ body, html {
 .header-admin {
     display: flex;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-between;
     background-color: var(--cor-principal);
     color: var(--cor-texto-header);
     padding: 0 40px;
@@ -38,13 +38,14 @@ body, html {
     display: flex;
     align-items: center;
     gap: 30px;
+    flex-grow: 1;
 }
 
-.menu-item-admin{
+.menu-item-admin {
     position: relative;
 }
 
-.menu-title-admin{
+.menu-title-admin {
     margin-left: 20px;
     background: transparent;
     border: none;
@@ -54,10 +55,30 @@ body, html {
     font-weight: 500;
 }
 
-.menu-title-admin:hover{
+.menu-title-admin:hover {
     color: var(--cor-texto);
 }
 
+.menu-item-admin.logout {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--cor-texto-header);
+    transition: 0.2s;
+}
+
+.menu-item-admin.logout:hover {
+    color: var(--cor-button-hover);
+    opacity: 0.8;
+}
+
+.menu-item-admin.logout svg {
+    vertical-align: middle;
+}
 .submenu-admin {
     position: absolute;
     top: 60px;
@@ -71,13 +92,13 @@ body, html {
     z-index: 1000;
 }
 
-.submenu-admin li{
+.submenu-admin li {
     padding: 10px 20px;
     cursor: pointer;
     color: var(--cor-texto);
 }
 
-.submenu-admin li:hover{
+.submenu-admin li:hover {
     background: var(--cor-hover);
     color: var(--cor-button-hover);
 }

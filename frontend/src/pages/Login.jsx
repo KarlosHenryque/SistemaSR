@@ -48,6 +48,7 @@ function Login() {
       })
 
       const dados = await resposta.json()
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       Swal.close()
 

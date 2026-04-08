@@ -38,3 +38,9 @@
 .swal2-html-container {
     color: #000 !important;
 }
+
+.imagem-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
