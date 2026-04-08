@@ -1,15 +1,15 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 import LayoutAdmin from "../assets/components/LayoutAdmin";
-import "../assets/css/AdminHome.css"
+import "../assets/css/AdminHome.css";
+import logo from "../assets/images/logo.jpg"; 
 
 function AdminHome() {
-
   return (
-   <LayoutAdmin>
-      <h1>Ola seja bem vindo</h1>
-   </LayoutAdmin>
-  )
+    <LayoutAdmin>
+      <div className="admin-center">
+        <img src={logo} alt="Logo" className="center-image" />
+      </div>
+    </LayoutAdmin>
+  );
 }
 
-export default AdminHome
+export default AdminHome;

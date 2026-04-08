@@ -1,0 +1,14 @@
+.admin-center {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;     
+  height: 80vh; 
+  text-align: center;
+}
+
+.center-image {
+  max-width: 800px; 
+  height: auto;
+  margin-top: 10px;
+}

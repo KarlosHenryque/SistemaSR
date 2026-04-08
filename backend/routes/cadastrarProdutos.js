@@ -7,10 +7,7 @@ const multer = require("multer");
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype === "image/png" ||
-      file.mimetype === "image/jpeg"
-    ) {
+    if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
       cb(null, true);
     } else {
       cb(new Error("Apenas PNG ou JPEG"));
@@ -31,29 +28,27 @@ function uploadMiddleware(req, res, next) {
 // rota para cadastrar produto
 router.post("/", uploadMiddleware, async (req, res) => {
   try {
-    const {
-      nome,
-      descricao,
-      categoria,
-      marca,
-      preco,
-      codigo,
-    } = req.body;
+    const { nome, descricao, categoria_id, marca, preco, codigo } = req.body;
 
-    // validação básica
-    if (!nome || !preco || !codigo) {
+    if (!nome || !preco || !codigo || !categoria_id) {
       return res.status(400).json({
-        erro: "Nome, preço e código são obrigatórios",
+        erro: "Nome, preço, código e categoria_id são obrigatórios",
       });
     }
 
-    // converter preço
     const precoNumber = parseFloat(preco);
-
     if (isNaN(precoNumber)) {
       return res.status(400).json({
         erro: "Preço inválido",
       });
+    }
+
+    const categoriaCheck = await pool.query(
+      "SELECT id FROM categorias WHERE id = $1",
+      [categoria_id]
+    );
+    if (categoriaCheck.rows.length === 0) {
+      return res.status(400).json({ erro: "Categoria não encontrada" });
     }
 
     const imagem = req.file ? req.file.buffer : null;
@@ -61,7 +56,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
 
     const query = `
       INSERT INTO produtos
-      (nome, descricao, categoria, marca, preco, codigo, imagem, imagem_tipo)
+      (nome, descricao, categoria_id, marca, preco, codigo, imagem, imagem_tipo)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
     `;
@@ -69,7 +64,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
     const values = [
       nome,
       descricao,
-      categoria,
+      categoria_id,
       marca,
       precoNumber,
       codigo,
@@ -80,7 +75,6 @@ router.post("/", uploadMiddleware, async (req, res) => {
     const result = await pool.query(query, values);
 
     res.status(201).json(result.rows[0]);
-
   } catch (error) {
     console.error("Erro ao cadastrar produto:", error);
     res.status(500).json({ erro: "Erro ao cadastrar produto" });

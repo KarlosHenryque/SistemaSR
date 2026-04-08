@@ -8,27 +8,30 @@ router.get("/", async (req, res) => {
 
   try {
     let query = `
-      SELECT id, nome, descricao, categoria, marca, preco, codigo, imagem, imagem_tipo
-      FROM produtos
+      SELECT p.id, p.nome, p.descricao, p.marca, p.preco, p.codigo,
+             p.imagem, p.imagem_tipo,
+             p.status,
+             c.nome AS categoria
+      FROM produtos p
+      JOIN categorias c ON p.categoria_id = c.id
       WHERE 1=1
     `;
 
-    let values = [];
+    const values = [];
     let index = 1;
 
     if (busca && busca !== "%") {
       query += `
-        AND (nome ILIKE $${index} OR categoria ILIKE $${index} OR marca ILIKE $${index})
+        AND (p.nome ILIKE $${index} OR c.nome ILIKE $${index} OR p.marca ILIKE $${index})
       `;
       values.push(`%${busca}%`);
       index++;
     }
 
-    query += " ORDER BY nome";
+    query += " ORDER BY p.nome";
 
     const result = await pool.query(query, values);
 
-    // Transformar imagem em base64 para enviar no JSON
     const produtos = result.rows.map(prod => ({
       ...prod,
       imagem: prod.imagem
@@ -37,32 +40,33 @@ router.get("/", async (req, res) => {
     }));
 
     res.json(produtos);
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao buscar produtos" });
   }
 });
 
-// Editar produto
+// Editar produto (sem alterar categoria)
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, categoria, marca, preco, codigo } = req.body;
+  const { nome, descricao, marca, preco, codigo, status } = req.body;
 
   try {
+    const statusBoolean = status === true || status === "true";
+
     const query = `
       UPDATE produtos
       SET nome = $1,
           descricao = $2,
-          categoria = $3,
-          marca = $4,
-          preco = $5,
-          codigo = $6
+          marca = $3,
+          preco = $4,
+          codigo = $5,
+          status = $6
       WHERE id = $7
       RETURNING *
     `;
 
-    const values = [nome, descricao, categoria, marca, preco, codigo, id];
+    const values = [nome, descricao, marca, preco, codigo, statusBoolean, id];
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
@@ -70,14 +74,37 @@ router.put("/:id", async (req, res) => {
     }
 
     res.json(result.rows[0]);
-
   } catch (error) {
     console.error("Erro ao atualizar produto:", error);
     res.status(500).json({ error: "Erro ao atualizar produto" });
   }
 });
 
-// Rota para buscar imagem separada (para frontend exibir diretamente)
+// Ativar/desativar produto
+router.patch("/status/:id", async (req, res) => {
+  const { id } = req.params;
+  let { status } = req.body;
+
+  try {
+    status = status === true || status === "true";
+
+    const result = await pool.query(
+      "UPDATE produtos SET status = $1 WHERE id = $2 RETURNING *",
+      [status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Produto não encontrado" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Erro ao atualizar status do produto:", error);
+    res.status(500).json({ error: "Erro ao atualizar status do produto" });
+  }
+});
+
+// Buscar imagem separada
 router.get("/imagem/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -99,7 +126,6 @@ router.get("/imagem/:id", async (req, res) => {
 
     res.setHeader("Content-Type", imagem_tipo);
     res.send(imagem);
-
   } catch (error) {
     console.error("Erro ao buscar imagem:", error);
     res.status(500).json({ error: "Erro ao buscar imagem" });
