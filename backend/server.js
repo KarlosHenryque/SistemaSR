@@ -11,11 +11,18 @@ app.use(express.json());
 const login = require("./routes/login");
 const usuarios = require("./routes/usuarios");
 const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
+const cadastrarProdutos = require("./routes/cadastrarProdutos");
+const produtos = require("./routes/produtos");
 
-// Utilizar rotas
+// Usuários
 app.use("/login", login);
 app.use("/usuarios", usuarios);
 app.use("/cadastrarUsuarios", cadastrarUsuarios);
+
+// Produtos
+app.use("/produtos", produtos);
+app.use("/cadastrarProdutos", cadastrarProdutos);
+
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

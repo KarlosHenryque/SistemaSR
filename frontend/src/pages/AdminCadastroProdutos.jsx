@@ -1,0 +1,211 @@
+import Swal from "sweetalert2";
+import { useState, useRef } from "react";
+import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import "../assets/css/AdminCadastroUsuarios.css";
+import LayoutAdmin from "../assets/components/LayoutAdmin";
+
+function AdminCadastrarProdutos() {
+
+    const [form, setForm] = useState({
+        nome: "",
+        descricao: "",
+        categoria: "",
+        marca: "",
+        preco: "",
+        codigo: "",
+        imagem: null
+    });
+
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const fileInputRef = useRef(null);
+
+    function handleChange(e) {
+        const { name, value } = e.target;
+
+        setForm({
+            ...form,
+            [name]: value
+        });
+    }
+
+    function handleFileChange(e) {
+        setForm({
+            ...form,
+            imagem: e.target.files[0]
+        });
+    }
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        if (!form.nome || !form.preco || !form.codigo) {
+            Swal.fire({
+                icon: "error",
+                title: "Campos obrigatórios",
+                text: "Preencha nome, preço e código."
+            });
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const formData = new FormData();
+
+            formData.append("nome", form.nome);
+            formData.append("descricao", form.descricao);
+            formData.append("categoria", form.categoria);
+            formData.append("marca", form.marca);
+            formData.append("preco", form.preco);
+            formData.append("codigo", form.codigo);
+
+            if (form.imagem) {
+                formData.append("imagem", form.imagem);
+            }
+
+            const response = await fetch("http://localhost:3000/cadastrarProdutos", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.erro || "Erro ao cadastrar produto");
+            }
+
+            await Swal.fire({
+                icon: "success",
+                title: "Sucesso!",
+                text: "Produto cadastrado com sucesso!"
+            });
+
+            // limpar form
+            setForm({
+                nome: "",
+                descricao: "",
+                categoria: "",
+                marca: "",
+                preco: "",
+                codigo: "",
+                imagem: null
+            });
+
+            // limpar input file
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+
+            navigate("/AdminHome");
+
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: error.message
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <LayoutAdmin>
+            <div className="page-container">
+                <div className="form-container">
+
+                    <div className="close-button" onClick={() => navigate("/AdminHome")}>
+                        <FaTimes />
+                    </div>
+
+                    <h1>Cadastro de Produtos</h1>
+
+                    <form className="form-admin" onSubmit={handleSubmit}>
+
+                        <div className="form-group">
+                            <label>Nome:</label>
+                            <input
+                                type="text"
+                                name="nome"
+                                value={form.nome}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Descrição:</label>
+                            <textarea
+                                name="descricao"
+                                value={form.descricao}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Categoria:</label>
+                            <input
+                                type="text"
+                                name="categoria"
+                                value={form.categoria}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Marca:</label>
+                            <input
+                                type="text"
+                                name="marca"
+                                value={form.marca}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Preço:</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="preco"
+                                value={form.preco}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Código:</label>
+                            <input
+                                type="text"
+                                name="codigo"
+                                value={form.codigo}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Imagem (PNG ou JPEG):</label>
+                            <input
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                onChange={handleFileChange}
+                                ref={fileInputRef}
+                            />
+                        </div>
+
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Cadastrando..." : "Cadastrar"}
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </LayoutAdmin>
+    );
+}
+
+export default AdminCadastrarProdutos;
