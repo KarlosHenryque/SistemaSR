@@ -10,9 +10,10 @@ app.use(express.json());
 // Importar rotas
 const login = require("./routes/login");
 const usuarios = require("./routes/usuarios");
+const produtos = require("./routes/produtos");
 const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
 const cadastrarProdutos = require("./routes/cadastrarProdutos");
-const produtos = require("./routes/produtos");
+const cadastrarCategoriaProduto = require("./routes/cadastrarCategoriaProduto");
 
 // Usuários
 app.use("/login", login);
@@ -22,6 +23,7 @@ app.use("/cadastrarUsuarios", cadastrarUsuarios);
 // Produtos
 app.use("/produtos", produtos);
 app.use("/cadastrarProdutos", cadastrarProdutos);
+app.use("/categorias", cadastrarCategoriaProduto);
 
 
 app.listen(PORT, () => {

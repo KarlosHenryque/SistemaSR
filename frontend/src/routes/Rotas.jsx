@@ -10,6 +10,7 @@ import AdminListarUsuarios from "../pages/AdminListarUsuarios";
 // Produtos
 import AdminCadastroProdutos from "../pages/AdminCadastroProdutos";
 import AdminListarProdutos from "../pages/AdminListarProdutos";
+import AdminCadastrarCategoria from "../pages/AdminCadastrarCategorias";
 
 function Rotas() {
   return (
@@ -21,7 +22,8 @@ function Rotas() {
         <Route path="/AdminListarUsuarios" element={<AdminListarUsuarios />} />
         <Route path="/AdminCadastroUsuarios" element={<AdminCadastroUsuarios />} />       
         <Route path="/AdminCadastroProdutos" element={<AdminCadastroProdutos />} />       
-        <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />       
+        <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />    
+        <Route path="/AdminCadastrarCategoria" element={<AdminCadastrarCategoria />} />   
         
       </Routes>
     </BrowserRouter>
