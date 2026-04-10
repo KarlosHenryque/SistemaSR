@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"
 import '../assets/css/Login.css'
 
@@ -9,15 +10,16 @@ function Login() {
   const [lembreMe, setLembreMe] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  useState(() => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
     const emailSalvo = localStorage.getItem("email");
     const lembrar = localStorage.getItem("lembrar");
 
-    if (lembrar == "true" && emailSalvo) {
+    if (lembrar === "true" && emailSalvo) {
       setEmail(emailSalvo);
       setLembreMe(true)
     }
-
   }, []);
 
   async function handleSubmit(e) {
@@ -53,19 +55,21 @@ function Login() {
       Swal.close()
 
       if (!resposta.ok) {
-
         await Swal.fire({
           icon: "error",
           title: "Erro no login",
           text: dados.mensagem || "Erro ao realizar login"
         })
-
         return
       }
 
-      localStorage.setItem("token", dados.token)
+      if (dados.token) {
+        localStorage.setItem("token", dados.token)
+      }
 
-       if (lembreMe) {
+      localStorage.setItem("tipo_usuario", dados.usuario.tipo_usuario)
+
+      if (lembreMe) {
         localStorage.setItem("email", email)
         localStorage.setItem("lembrar", true)
       } else {
@@ -81,7 +85,13 @@ function Login() {
         showConfirmButton: false
       })
 
-      window.location.href = "/AdminHome"
+      const tipoUsuario = dados.usuario.tipo_usuario.toLowerCase();
+
+      if (tipoUsuario === "usuario") {
+        navigate("/AdminHome");
+      } else {
+        navigate("/UsuarioHome");
+      }
 
     } catch (erro) {
 

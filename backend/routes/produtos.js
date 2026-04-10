@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../dataBase/db");
 
-// Listar produtos com busca opcional
+// Listar produtos com busca + filtro de status
 router.get("/", async (req, res) => {
-  const { busca } = req.query;
+  const { busca, status } = req.query;
 
   try {
     let query = `
@@ -20,11 +20,21 @@ router.get("/", async (req, res) => {
     const values = [];
     let index = 1;
 
+    // 🔍 Filtro de busca
     if (busca && busca !== "%") {
       query += `
-        AND (p.nome ILIKE $${index} OR c.nome ILIKE $${index} OR p.marca ILIKE $${index})
+        AND (p.nome ILIKE $${index} 
+        OR c.nome ILIKE $${index} 
+        OR p.marca ILIKE $${index})
       `;
       values.push(`%${busca}%`);
+      index++;
+    }
+
+    // ✅ Filtro de status (ATIVO / INATIVO)
+    if (status !== undefined) {
+      query += ` AND p.status = $${index}`;
+      values.push(status === "true");
       index++;
     }
 
@@ -40,13 +50,14 @@ router.get("/", async (req, res) => {
     }));
 
     res.json(produtos);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao buscar produtos" });
   }
 });
 
-// Editar produto (sem alterar categoria)
+// Editar produto
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, descricao, marca, preco, codigo, status } = req.body;
@@ -74,6 +85,7 @@ router.put("/:id", async (req, res) => {
     }
 
     res.json(result.rows[0]);
+
   } catch (error) {
     console.error("Erro ao atualizar produto:", error);
     res.status(500).json({ error: "Erro ao atualizar produto" });
@@ -98,37 +110,10 @@ router.patch("/status/:id", async (req, res) => {
     }
 
     res.json(result.rows[0]);
+
   } catch (error) {
     console.error("Erro ao atualizar status do produto:", error);
     res.status(500).json({ error: "Erro ao atualizar status do produto" });
-  }
-});
-
-// Buscar imagem separada
-router.get("/imagem/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      "SELECT imagem, imagem_tipo FROM produtos WHERE id = $1",
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Produto não encontrado" });
-    }
-
-    const { imagem, imagem_tipo } = result.rows[0];
-
-    if (!imagem) {
-      return res.status(404).json({ error: "Produto não possui imagem" });
-    }
-
-    res.setHeader("Content-Type", imagem_tipo);
-    res.send(imagem);
-  } catch (error) {
-    console.error("Erro ao buscar imagem:", error);
-    res.status(500).json({ error: "Erro ao buscar imagem" });
   }
 });
 

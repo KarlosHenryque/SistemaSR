@@ -1,0 +1,75 @@
+.LayoutUser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0f2f6b;
+  padding: 16px 30px;
+  color: white;
+}
+
+.LayoutUser-left {
+  display: flex;
+  align-items: center; 
+  gap: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.LayoutUser-center {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 50%;
+}
+
+.LayoutUser-center input {
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 16px;
+  flex: 1;
+}
+
+.LayoutUser-center button {
+  background: #0059fd;
+  border: none;
+  color: white;
+  padding: 12px 18px;
+  display: flex;            
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.LayoutUser-center button svg {
+  font-size: 20px; 
+}
+
+.LayoutUser-right {
+  display: flex;
+  align-items: center; 
+  gap: 25px;
+}
+
+.cart {
+  position: relative;
+  cursor: pointer;
+  display: flex;          
+  align-items: center;
+  justify-content: center;
+}
+
+.cart svg {
+  font-size: 24px;
+}
+

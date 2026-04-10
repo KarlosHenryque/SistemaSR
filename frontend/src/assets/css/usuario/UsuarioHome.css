@@ -1,0 +1,93 @@
+.UserHome-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.UserHome-hero {
+  flex: 1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #000000;
+}
+
+.UserHome-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.UserHome-logo {
+  width: 180px;
+  margin: 20px 0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px;
+}
+
+.UserHome-description {
+  max-width: 700px;
+  margin: 30px auto;
+  font-size: 20px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.UserHome-footer {
+  background: #1f7db6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  color: white;
+  flex-wrap: wrap;
+}
+
+.UserHome-footer-left img {
+  width: 80px;
+  border-radius: 8px;
+  background: white;
+  padding: 6px;
+}
+
+.UserHome-footer-center {
+  text-align: center;
+}
+
+.UserHome-footer-center h2 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.UserHome-footer-center p {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.UserHome-footer-right {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+}
+
+.UserHome-footer-right a {
+  color: #ffffff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.UserHome-footer-right a svg {
+  color: #ffffff;
+}
+
+.UserHome-footer-right a:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}

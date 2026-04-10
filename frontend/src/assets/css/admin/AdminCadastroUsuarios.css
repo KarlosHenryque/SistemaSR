@@ -153,3 +153,39 @@ input:checked + .slider:before {
     font-size: 14px;
     color: var(--cor-texto);
 }
+
+.SelectFiltro {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 14px;
+    color: var(--cor-texto);
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+
+    appearance: none;
+
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%234B4B4B' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+
+    padding-right: 35px;
+}
+
+.SelectFiltro:hover {
+    background-color: var(--cor-hover);
+}
+
+.SelectFiltro:focus {
+    border-color: var(--cor-button-hover);
+    box-shadow: 0 0 5px rgba(0,132,213,0.3);
+}
+
+.SelectFiltro:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
