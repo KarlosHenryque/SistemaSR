@@ -247,7 +247,7 @@ function AdminCadastrarDepartamento() {
                     <tr>
                       <th>Nome</th>
                       <th>Status</th>
-                      <th>Ações</th>
+                      <th style={{ display: "flex", justifyContent: "center" }}>Ações</th>
                     </tr>
                   </thead>
 
@@ -256,7 +256,7 @@ function AdminCadastrarDepartamento() {
                       <tr key={dep.id}>
                         <td>{dep.nome}</td>
                         <td>{dep.status ? "Ativo" : "Inativo"}</td>
-                        <td>
+                        <td style={{ display: "flex", justifyContent: "center" }}>
                           <button
                             className="btn-editar"
                             onClick={() => editarDepartamento(dep)}

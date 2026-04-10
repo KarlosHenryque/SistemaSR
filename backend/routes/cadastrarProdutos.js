@@ -30,14 +30,14 @@ router.post("/", uploadMiddleware, async (req, res) => {
       descricao,
       categoria_id,
       departamento_id,
-      marca,
+      marca_id,
       preco,
       codigo,
     } = req.body;
 
-    if (!nome || !preco || !codigo || !categoria_id || !departamento_id) {
+    if (!nome || !preco || !codigo || !categoria_id || !departamento_id || !marca_id) {
       return res.status(400).json({
-        erro: "Nome, preço, código, categoria_id e departamento_id são obrigatórios",
+        erro: "Nome, preço, código, categoria, departamento e marca são obrigatórios",
       });
     }
 
@@ -64,18 +64,25 @@ router.post("/", uploadMiddleware, async (req, res) => {
       return res.status(400).json({ erro: "Departamento não encontrado" });
     }
 
-  
+    const marcaCheck = await pool.query(
+      "SELECT id FROM marca WHERE id = $1",
+      [marca_id]
+    );
+
+    if (marcaCheck.rows.length === 0) {
+      return res.status(400).json({ erro: "Marca não encontrada" });
+    }
+
     const imagem = req.file ? req.file.buffer : null;
     const imagem_tipo = req.file ? req.file.mimetype : null;
 
     const query = `
-      INSERT INTO produtos
-      (
+      INSERT INTO produtos (
         nome,
         descricao,
         categoria_id,
         departamento_id,
-        marca,
+        marca_id,
         preco,
         codigo,
         imagem,
@@ -90,7 +97,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
       descricao,
       categoria_id,
       departamento_id,
-      marca,
+      marca_id,
       precoNumber,
       codigo,
       imagem,
@@ -100,6 +107,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
     const result = await pool.query(query, values);
 
     return res.status(201).json(result.rows[0]);
+
   } catch (error) {
     console.error("Erro ao cadastrar produto:", error);
     return res.status(500).json({ erro: "Erro ao cadastrar produto" });

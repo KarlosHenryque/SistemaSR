@@ -13,8 +13,11 @@ const usuarios = require("./routes/usuarios");
 const produtos = require("./routes/produtos");
 const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
 const cadastrarProdutos = require("./routes/cadastrarProdutos");
-const cadastrarCategoriaProduto = require("./routes/cadastrarCategoriaProduto");
-const cadastrarDepartamentoProdutos = require("./routes/cadastrarDepartamentoProdutos");
+const cadastrarCategoriaProduto = require("./routes/CategoriaProduto");
+const cadastrarDepartamentoProdutos = require("./routes/DepartamentoProdutos");
+const marcaProdutos = require("./routes/marcaProdutos");
+
+const produtosDetalhes = require("./routes/produtosDetalhes");
 
 // Admin
 app.use("/login", login);
@@ -24,6 +27,10 @@ app.use("/produtos", produtos);
 app.use("/cadastrarProdutos", cadastrarProdutos);
 app.use("/categorias", cadastrarCategoriaProduto);
 app.use("/departamentos", cadastrarDepartamentoProdutos);
+app.use("/marcas", marcaProdutos);
+
+// Usuário 
+app.use("/produtos", produtosDetalhes);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

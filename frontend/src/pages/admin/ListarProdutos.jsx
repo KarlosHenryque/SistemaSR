@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../../assets/css/admin/AdminCadastroUsuarios.css";
-import LayoutAdmin from "../../assets/components/LayoutAdmin";
+import LayoutAdmin from "../../assets/components/LayoutAdmin.jsx";
 import { editarProdutoModal } from "../../utils/swalFormsProdutos.js";
 
 function AdminListarProdutos() {

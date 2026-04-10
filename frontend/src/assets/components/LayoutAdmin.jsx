@@ -82,6 +82,9 @@ function LayoutAdmin({ children }) {
                 <li onClick={() => navigate("/AdminListarProdutos")}>
                   Listar produtos
                 </li>
+                <li onClick={() => navigate("/AdminCadastrarMarca")}>
+                  Marca
+                </li>
               </ul>
             )}
           </div>
