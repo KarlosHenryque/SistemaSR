@@ -12,6 +12,9 @@ import AdminCadastroProdutos from "../pages/AdminCadastroProdutos";
 import AdminListarProdutos from "../pages/AdminListarProdutos";
 import AdminCadastrarCategoria from "../pages/AdminCadastrarCategorias";
 
+// Usuário
+import UsuarioHome from "../pages/usuario/UsuarioHome";
+
 function Rotas() {
   return (
     <BrowserRouter>
@@ -24,6 +27,9 @@ function Rotas() {
         <Route path="/AdminCadastroProdutos" element={<AdminCadastroProdutos />} />       
         <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />    
         <Route path="/AdminCadastrarCategoria" element={<AdminCadastrarCategoria />} />   
+
+        // Usuário
+        <Route path="/UsuarioHome" element={<UsuarioHome />} />
         
       </Routes>
     </BrowserRouter>
