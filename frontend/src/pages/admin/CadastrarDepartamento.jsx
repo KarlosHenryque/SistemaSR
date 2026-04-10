@@ -44,7 +44,11 @@ async function editarDepartamentoModal(departamento) {
     },
 
     showCancelButton: true,
+    reverseButtons: true,
     confirmButtonText: "Salvar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#052364",
+    cancelButtonColor: "#ff4d4d",
 
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
@@ -73,7 +77,11 @@ async function novoDepartamentoModal() {
     `,
 
     showCancelButton: true,
+    reverseButtons: true,
     confirmButtonText: "Cadastrar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#052364",
+    cancelButtonColor: "#ff4d4d",
 
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
@@ -126,7 +134,11 @@ function AdminCadastrarDepartamento() {
       title: "Confirmar alteração?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Salvar"
+      reverseButtons: true,
+      confirmButtonText: "Salvar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#052364",
+      cancelButtonColor: "#ff4d4d",
     });
 
     if (!confirm.isConfirmed) return;
@@ -144,7 +156,12 @@ function AdminCadastrarDepartamento() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Departamento atualizado!", "success");
+      await Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: "Departamento atualizado!",
+        confirmButtonColor: "#052364",
+      });
 
       buscarDepartamentos(busca, filtroStatus);
 
@@ -170,7 +187,12 @@ function AdminCadastrarDepartamento() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Departamento cadastrado!", "success");
+      await Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: "Departamento cadastrado!",
+        confirmButtonColor: "#052364",
+      });
 
       buscarDepartamentos(busca, filtroStatus);
 

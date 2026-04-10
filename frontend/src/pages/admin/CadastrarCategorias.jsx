@@ -5,7 +5,20 @@ import { useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../assets/components/LayoutAdmin";
 import "../../assets/css/admin/AdminCadastroUsuarios.css";
 
-async function editarCategoriaModal(categoria) {
+/* ================= MODAL EDITAR ================= */
+async function editarCategoriaModal(categoria, departamentos) {
+  const options = departamentos
+    .map(
+      (d) => `
+      <option value="${d.id}" ${
+        d.id === categoria.departamento_id ? "selected" : ""
+      }>
+        ${d.nome}
+      </option>
+    `
+    )
+    .join("");
+
   const { value: formValues } = await Swal.fire({
     icon: "info",
     title: "Editar Categoria",
@@ -13,6 +26,11 @@ async function editarCategoriaModal(categoria) {
       <div class="swal-form">
 
         <input id="swal-nome" class="swal-input-custom" placeholder="Nome da categoria">
+
+        <select id="swal-departamento" class="swal-input-custom" style="margin-top:10px;">
+          <option value="">Selecione um departamento</option>
+          ${options}
+        </select>
 
         <div class="status-container" style="margin-top:10px;">
           <label>Status da categoria</label>
@@ -54,28 +72,46 @@ async function editarCategoriaModal(categoria) {
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
       const status = document.getElementById("swal-ativo").checked;
+      const departamento_id =
+        document.getElementById("swal-departamento").value;
 
       if (!nome) {
-        Swal.showValidationMessage("O nome da categoria é obrigatório");
+        Swal.showValidationMessage("O nome é obrigatório");
         return false;
       }
 
-      return { nome, status };
-    }
+      if (!departamento_id) {
+        Swal.showValidationMessage("Selecione um departamento");
+        return false;
+      }
+
+      return { nome, status, departamento_id };
+    },
   });
 
   return formValues;
 }
 
-async function novaCategoriaModal() {
+/* ================= MODAL NOVO ================= */
+async function novaCategoriaModal(departamentos) {
+  const options = departamentos
+    .map((d) => `<option value="${d.id}">${d.nome}</option>`)
+    .join("");
+
   const { value: formValues } = await Swal.fire({
     icon: "info",
     title: "Nova Categoria",
     html: `
       <div class="swal-form">
         <input id="swal-nome" class="swal-input-custom" placeholder="Nome da categoria">
+
+        <select id="swal-departamento" class="swal-input-custom" style="margin-top:10px;">
+          <option value="">Selecione um departamento</option>
+          ${options}
+        </select>
       </div>
     `,
+
     showCancelButton: true,
     showCloseButton: true,
     reverseButtons: true,
@@ -86,28 +122,42 @@ async function novaCategoriaModal() {
 
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
+      const departamento_id =
+        document.getElementById("swal-departamento").value;
 
       if (!nome) {
-        Swal.showValidationMessage("O nome da categoria é obrigatório");
+        Swal.showValidationMessage("O nome é obrigatório");
         return false;
       }
 
-      return { nome, status: true };
-    }
+      if (!departamento_id) {
+        Swal.showValidationMessage("Selecione um departamento");
+        return false;
+      }
+
+      return {
+        nome,
+        status: true,
+        departamento_id,
+      };
+    },
   });
 
   return formValues;
 }
 
+/* ================= COMPONENTE ================= */
 function AdminListarCategorias() {
   const [busca, setBusca] = useState("");
   const [categorias, setCategorias] = useState([]);
+  const [departamentos, setDepartamentos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [buscou, setBuscou] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("true");
 
   const navigate = useNavigate();
 
+  /* ===== BUSCAR CATEGORIAS ===== */
   async function buscarCategorias(valor = "", status = filtroStatus) {
     try {
       setLoading(true);
@@ -119,7 +169,6 @@ function AdminListarCategorias() {
 
       const data = await response.json();
       setCategorias(data);
-
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     } finally {
@@ -127,11 +176,23 @@ function AdminListarCategorias() {
     }
   }
 
+  /* ===== BUSCAR DEPARTAMENTOS ===== */
+  async function buscarDepartamentos() {
+    try {
+      const response = await fetch("http://localhost:3000/departamentos");
+      const data = await response.json();
+      setDepartamentos(data);
+    } catch (error) {
+      console.error("Erro ao buscar departamentos:", error);
+    }
+  }
+
+  /* ===== EDITAR ===== */
   async function editarCategoria(cat) {
-    const formValues = await editarCategoriaModal(cat);
+    const formValues = await editarCategoriaModal(cat, departamentos);
     if (!formValues) return;
 
-    const confirm = await Swal.fire({
+     const confirm = await Swal.fire({
       title: "Confirmar alteração?",
       icon: "question",
       showCancelButton: true,
@@ -157,17 +218,21 @@ function AdminListarCategorias() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Categoria atualizada!", "success");
+      await Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: "Categoria atualizada!",
+        confirmButtonColor: "#052364",
+      });
 
       buscarCategorias(busca, filtroStatus);
-
     } catch (error) {
       Swal.fire("Erro", error.message, "error");
     }
   }
 
   async function criarCategoria() {
-    const formValues = await novaCategoriaModal();
+    const formValues = await novaCategoriaModal(departamentos);
     if (!formValues) return;
 
     try {
@@ -180,10 +245,15 @@ function AdminListarCategorias() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Categoria cadastrada!", "success");
+      await Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: "Categoria cadastrada!",
+        confirmButtonColor: "#052364",
+      });
+      
 
       buscarCategorias(busca, filtroStatus);
-
     } catch (error) {
       Swal.fire("Erro", error.message, "error");
     }
@@ -191,6 +261,7 @@ function AdminListarCategorias() {
 
   useEffect(() => {
     buscarCategorias("", "true");
+    buscarDepartamentos();
   }, []);
 
   return (
@@ -204,11 +275,7 @@ function AdminListarCategorias() {
 
           <h1>Categorias Cadastradas</h1>
 
-          {/* FILTROS */}
-          <div
-            className="search-container-listar"
-            style={{ display: "flex", gap: "10px", alignItems: "center" }}
-          >
+          <div className="search-container-listar" style={{ display: "flex", gap: "10px" }}>
 
             <select
               className="SelectFiltro"
@@ -227,68 +294,45 @@ function AdminListarCategorias() {
               placeholder="Buscar categoria"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  buscarCategorias(busca, filtroStatus);
-                }
-              }}
             />
 
             <button onClick={() => buscarCategorias(busca, filtroStatus)}>
               Buscar
             </button>
 
-            <button
-              style={{ backgroundColor: "#052364", color: "#fff" }}
-              onClick={criarCategoria}
-            >
+            <button onClick={criarCategoria}>
               Nova Categoria
             </button>
           </div>
 
           {loading && <p>Carregando...</p>}
 
-          {!loading && (
-            <>
-              {!buscou ? (
-                <p className="no-data-listar">
-                  Digite algo para buscar categorias
-                </p>
-              ) : categorias.length === 0 ? (
-                <p className="no-data-listar">
-                  Nenhuma categoria encontrada
-                </p>
-              ) : (
-                <table className="table-users-listar">
-                  <thead>
-                    <tr>
-                      <th>Nome</th>
-                      <th>Status</th>
-                      <th style={{ display: "flex", justifyContent: "center" }}>
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
+          {!loading && categorias.length > 0 && (
+            <table className="table-users-listar">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Status</th>
+                  <th>Departamento</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
 
-                  <tbody>
-                    {categorias.map((cat) => (
-                      <tr key={cat.id}>
-                        <td>{cat.nome}</td>
-                        <td>{cat.status ? "Ativo" : "Inativo"}</td>
-                        <td style={{ display: "flex", justifyContent: "center" }}>
-                          <button
-                            className="btn-editar"
-                            onClick={() => editarCategoria(cat)}
-                          >
-                            Editar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </>
+              <tbody>
+                {categorias.map((cat) => (
+                  <tr key={cat.id}>
+                    <td>{cat.nome}</td>
+                    <td>{cat.status ? "Ativo" : "Inativo"}</td>
+                    <td>{cat.departamento_nome}</td>
+                    <td>
+                      <button className="btn-editar" onClick={() => editarCategoria(cat)}>
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
 
         </div>
