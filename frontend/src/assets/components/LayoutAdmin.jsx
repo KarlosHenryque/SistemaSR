@@ -42,7 +42,6 @@ function LayoutAdmin({ children }) {
             Home
           </span>
 
-          {/* USUÁRIOS */}
           <div className="menu-item-admin">
             <span 
               className="menu-title-admin"
@@ -62,7 +61,6 @@ function LayoutAdmin({ children }) {
             )}
           </div>
 
-          {/* PRODUTOS */}
           <div className="menu-item-admin">
             <span 
               className="menu-title-admin"
@@ -73,19 +71,21 @@ function LayoutAdmin({ children }) {
             {menuAberto === "produtos" && (
               <ul className="submenu-admin">
                 <li onClick={() => navigate("/AdminCadastroProdutos")}>
-                  Novo produto
-                </li>
-                <li onClick={() => navigate("/AdminListarProdutos")}>
-                  Listar produtos
+                  Cadastrar produto
                 </li>
                 <li onClick={() => navigate("/AdminCadastrarCategoria")}>
                   Categoria
+                </li>
+                <li onClick={() => navigate("/AdminCadastrarDepartamento")}>
+                  Departamento
+                </li>
+                <li onClick={() => navigate("/AdminListarProdutos")}>
+                  Listar produtos
                 </li>
               </ul>
             )}
           </div>
 
-          {/* Sair */}
           <div className="menu-item-admin logout" onClick={handleLogout}>
             <FaSignOutAlt size={20} style={{ marginRight: "5px" }} />
           </div>

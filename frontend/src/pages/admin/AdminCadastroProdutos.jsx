@@ -2,36 +2,47 @@ import Swal from "sweetalert2";
 import { useState, useRef, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "../assets/css/admin/AdminCadastroUsuarios.css";
-import LayoutAdmin from "../assets/components/LayoutAdmin";
+import "../../assets/css/admin/AdminCadastroUsuarios.css";
+import LayoutAdmin from "../../assets/components/LayoutAdmin";
 
 function AdminCadastrarProdutos() {
   const [form, setForm] = useState({
     nome: "",
     descricao: "",
-    categoria_id: "", 
+    categoria_id: "",
+    departamento_id: "", 
     marca: "",
     preco: "",
     codigo: "",
     imagem: null
   });
 
-  const [categorias, setCategorias] = useState([]); 
+  const [categorias, setCategorias] = useState([]);
+  const [departamentos, setDepartamentos] = useState([]); 
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    async function fetchCategorias() {
+    async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/categorias");
-        const data = await response.json();
-        setCategorias(data);
+        const [catRes, depRes] = await Promise.all([
+          fetch("http://localhost:3000/categorias"),
+          fetch("http://localhost:3000/departamentos")
+        ]);
+
+        const catData = await catRes.json();
+        const depData = await depRes.json();
+
+        setCategorias(catData);
+        setDepartamentos(depData);
       } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
+        console.error("Erro ao buscar dados:", error);
       }
     }
-    fetchCategorias();
+
+    fetchData();
   }, []);
 
   function handleChange(e) {
@@ -52,11 +63,17 @@ function AdminCadastrarProdutos() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!form.nome || !form.preco || !form.codigo || !form.categoria_id) {
+    if (
+      !form.nome ||
+      !form.preco ||
+      !form.codigo ||
+      !form.categoria_id ||
+      !form.departamento_id 
+    ) {
       Swal.fire({
         icon: "error",
         title: "Campos obrigatórios",
-        text: "Preencha nome, preço, código e selecione uma categoria."
+        text: "Preencha todos os campos obrigatórios."
       });
       return;
     }
@@ -67,7 +84,8 @@ function AdminCadastrarProdutos() {
       const formData = new FormData();
       formData.append("nome", form.nome);
       formData.append("descricao", form.descricao);
-      formData.append("categoria_id", form.categoria_id); 
+      formData.append("categoria_id", form.categoria_id);
+      formData.append("departamento_id", form.departamento_id); 
       formData.append("marca", form.marca);
       formData.append("preco", form.preco);
       formData.append("codigo", form.codigo);
@@ -97,6 +115,7 @@ function AdminCadastrarProdutos() {
         nome: "",
         descricao: "",
         categoria_id: "",
+        departamento_id: "", 
         marca: "",
         preco: "",
         codigo: "",
@@ -108,6 +127,7 @@ function AdminCadastrarProdutos() {
       }
 
       navigate("/AdminHome");
+
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -123,6 +143,7 @@ function AdminCadastrarProdutos() {
     <LayoutAdmin>
       <div className="page-container">
         <div className="form-container">
+
           <div className="close-button" onClick={() => navigate("/AdminHome")}>
             <FaTimes />
           </div>
@@ -130,6 +151,7 @@ function AdminCadastrarProdutos() {
           <h1>Cadastro de Produtos</h1>
 
           <form className="form-admin" onSubmit={handleSubmit}>
+
             <div className="form-group">
               <label>Nome:</label>
               <input
@@ -162,6 +184,23 @@ function AdminCadastrarProdutos() {
                 {categorias.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Departamento:</label>
+              <select
+                name="departamento_id"
+                value={form.departamento_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione um departamento</option>
+                {departamentos.map((dep) => (
+                  <option key={dep.id} value={dep.id}>
+                    {dep.nome}
                   </option>
                 ))}
               </select>
@@ -213,6 +252,7 @@ function AdminCadastrarProdutos() {
             <button type="submit" disabled={loading}>
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
+
           </form>
         </div>
       </div>

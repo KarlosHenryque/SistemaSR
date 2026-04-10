@@ -1,6 +1,6 @@
-import LayoutAdmin from "../assets/components/LayoutAdmin";
-import "../assets/css/admin/AdminHome.css";
-import logo from "../assets/images/logo.jpg"; 
+import LayoutAdmin from "../../assets/components/LayoutAdmin";
+import "../../assets/css/admin/AdminHome.css";
+import logo from "../../assets/images/logo.jpg"; 
 
 function AdminHome() {
   return (

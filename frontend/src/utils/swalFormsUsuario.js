@@ -5,7 +5,6 @@ export async function editarUsuarioModal(user) {
 
     const { value: formValues } = await Swal.fire({
         title: "Editar Usuário",
-        icon: "info",
         html: `
             <div class="swal-form">
                 <input id="swal-nome" class="swal-input-custom" placeholder="Nome">

@@ -14,17 +14,16 @@ const produtos = require("./routes/produtos");
 const cadastrarUsuarios = require("./routes/cadastrarUsuarios");
 const cadastrarProdutos = require("./routes/cadastrarProdutos");
 const cadastrarCategoriaProduto = require("./routes/cadastrarCategoriaProduto");
+const cadastrarDepartamentoProdutos = require("./routes/cadastrarDepartamentoProdutos");
 
-// Usuários
+// Admin
 app.use("/login", login);
 app.use("/usuarios", usuarios);
 app.use("/cadastrarUsuarios", cadastrarUsuarios);
-
-// Produtos
 app.use("/produtos", produtos);
 app.use("/cadastrarProdutos", cadastrarProdutos);
 app.use("/categorias", cadastrarCategoriaProduto);
-
+app.use("/departamentos", cadastrarDepartamentoProdutos);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

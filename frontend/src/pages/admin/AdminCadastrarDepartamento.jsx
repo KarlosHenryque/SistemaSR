@@ -5,21 +5,21 @@ import { useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../assets/components/LayoutAdmin";
 import "../../assets/css/admin/AdminCadastroUsuarios.css";
 
-async function editarCategoriaModal(categoria) {
+async function editarDepartamentoModal(departamento) {
   const { value: formValues } = await Swal.fire({
     icon: "info",
-    title: "Editar Categoria",
+    title: "Editar Departamento",
     html: `
       <div class="swal-form">
 
-        <input id="swal-nome" class="swal-input-custom" placeholder="Nome da categoria">
+        <input id="swal-nome" class="swal-input-custom" placeholder="Nome do departamento">
 
         <div class="status-container" style="margin-top:10px;">
-          <label>Status da categoria</label>
+          <label>Status do departamento</label>
 
           <label class="switch">
-            <input type="checkbox" id="swal-ativo">
-            <span class="slider"></span>
+              <input type="checkbox" id="swal-ativo">
+              <span class="slider"></span>
           </label>
 
           <span id="status-text" class="status-text"></span>
@@ -32,8 +32,8 @@ async function editarCategoriaModal(categoria) {
       const checkbox = document.getElementById("swal-ativo");
       const statusText = document.getElementById("status-text");
 
-      document.getElementById("swal-nome").value = categoria.nome || "";
-      checkbox.checked = categoria.status;
+      document.getElementById("swal-nome").value = departamento.nome || "";
+      checkbox.checked = departamento.status;
 
       const atualizarTexto = () => {
         statusText.textContent = checkbox.checked ? "Ativo" : "Inativo";
@@ -44,19 +44,14 @@ async function editarCategoriaModal(categoria) {
     },
 
     showCancelButton: true,
-    showCloseButton: true,
-    reverseButtons: true,
     confirmButtonText: "Salvar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: "#052364",
-    cancelButtonColor: "#ff4d4d",
 
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
       const status = document.getElementById("swal-ativo").checked;
 
       if (!nome) {
-        Swal.showValidationMessage("O nome da categoria é obrigatório");
+        Swal.showValidationMessage("O nome do departamento é obrigatório");
         return false;
       }
 
@@ -67,28 +62,24 @@ async function editarCategoriaModal(categoria) {
   return formValues;
 }
 
-async function novaCategoriaModal() {
+async function novoDepartamentoModal() {
   const { value: formValues } = await Swal.fire({
     icon: "info",
-    title: "Nova Categoria",
+    title: "Novo Departamento",
     html: `
       <div class="swal-form">
-        <input id="swal-nome" class="swal-input-custom" placeholder="Nome da categoria">
+        <input id="swal-nome" class="swal-input-custom" placeholder="Nome do departamento">
       </div>
     `,
+
     showCancelButton: true,
-    showCloseButton: true,
-    reverseButtons: true,
     confirmButtonText: "Cadastrar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: "#052364",
-    cancelButtonColor: "#ff4d4d",
 
     preConfirm: () => {
       const nome = document.getElementById("swal-nome").value.trim();
 
       if (!nome) {
-        Swal.showValidationMessage("O nome da categoria é obrigatório");
+        Swal.showValidationMessage("O nome do departamento é obrigatório");
         return false;
       }
 
@@ -99,90 +90,89 @@ async function novaCategoriaModal() {
   return formValues;
 }
 
-function AdminListarCategorias() {
+function AdminCadastrarDepartamento() {
   const [busca, setBusca] = useState("");
-  const [categorias, setCategorias] = useState([]);
+  const [departamentos, setDepartamentos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [buscou, setBuscou] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("true");
 
   const navigate = useNavigate();
 
-  async function buscarCategorias(valor = "", status = filtroStatus) {
+  async function buscarDepartamentos(valor = "", status = filtroStatus) {
     try {
       setLoading(true);
       setBuscou(true);
 
       const response = await fetch(
-        `http://localhost:3000/categorias?busca=${valor}&status=${status}`
+        `http://localhost:3000/departamentos?busca=${valor}&status=${status}`
       );
 
       const data = await response.json();
-      setCategorias(data);
+      setDepartamentos(data);
 
     } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
+      console.error("Erro ao buscar departamentos:", error);
     } finally {
       setLoading(false);
     }
   }
 
-  async function editarCategoria(cat) {
-    const formValues = await editarCategoriaModal(cat);
+  async function editarDepartamento(dep) {
+    const formValues = await editarDepartamentoModal(dep);
     if (!formValues) return;
 
     const confirm = await Swal.fire({
       title: "Confirmar alteração?",
       icon: "question",
       showCancelButton: true,
-      reverseButtons: true,
-      confirmButtonText: "Salvar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "#052364",
-      cancelButtonColor: "#ff4d4d",
+      confirmButtonText: "Salvar"
     });
 
     if (!confirm.isConfirmed) return;
 
     try {
       const response = await fetch(
-        `http://localhost:3000/categorias/${cat.id}`,
+        `http://localhost:3000/departamentos/${dep.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formValues),
+          body: JSON.stringify(formValues)
         }
       );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Categoria atualizada!", "success");
+      await Swal.fire("Sucesso!", "Departamento atualizado!", "success");
 
-      buscarCategorias(busca, filtroStatus);
+      buscarDepartamentos(busca, filtroStatus);
 
     } catch (error) {
       Swal.fire("Erro", error.message, "error");
     }
   }
 
-  async function criarCategoria() {
-    const formValues = await novaCategoriaModal();
+  async function criarDepartamento() {
+    const formValues = await novoDepartamentoModal();
     if (!formValues) return;
 
     try {
-      const response = await fetch("http://localhost:3000/categorias", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
+      const response = await fetch(
+        "http://localhost:3000/departamentos",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formValues)
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      await Swal.fire("Sucesso!", "Categoria cadastrada!", "success");
+      await Swal.fire("Sucesso!", "Departamento cadastrado!", "success");
 
-      buscarCategorias(busca, filtroStatus);
+      buscarDepartamentos(busca, filtroStatus);
 
     } catch (error) {
       Swal.fire("Erro", error.message, "error");
@@ -190,8 +180,9 @@ function AdminListarCategorias() {
   }
 
   useEffect(() => {
-    buscarCategorias("", "true");
+    buscarDepartamentos("", "true");
   }, []);
+
 
   return (
     <LayoutAdmin>
@@ -202,20 +193,16 @@ function AdminListarCategorias() {
             <FaTimes />
           </div>
 
-          <h1>Categorias Cadastradas</h1>
+          <h1>Departamentos Cadastrados</h1>
 
-          {/* FILTROS */}
-          <div
-            className="search-container-listar"
-            style={{ display: "flex", gap: "10px", alignItems: "center" }}
-          >
+          <div className="search-container-listar" style={{ display: "flex", gap: "10px" }}>
 
             <select
               className="SelectFiltro"
               value={filtroStatus}
               onChange={(e) => {
                 setFiltroStatus(e.target.value);
-                buscarCategorias(busca, e.target.value);
+                buscarDepartamentos(busca, e.target.value);
               }}
             >
               <option value="true">Ativos</option>
@@ -224,25 +211,25 @@ function AdminListarCategorias() {
 
             <input
               type="text"
-              placeholder="Buscar categoria"
+              placeholder="Buscar departamento"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  buscarCategorias(busca, filtroStatus);
+                  buscarDepartamentos(busca, filtroStatus);
                 }
               }}
             />
 
-            <button onClick={() => buscarCategorias(busca, filtroStatus)}>
+            <button onClick={() => buscarDepartamentos(busca, filtroStatus)}>
               Buscar
             </button>
 
             <button
               style={{ backgroundColor: "#052364", color: "#fff" }}
-              onClick={criarCategoria}
+              onClick={criarDepartamento}
             >
-              Nova Categoria
+              Novo Departamento
             </button>
           </div>
 
@@ -251,34 +238,28 @@ function AdminListarCategorias() {
           {!loading && (
             <>
               {!buscou ? (
-                <p className="no-data-listar">
-                  Digite algo para buscar categorias
-                </p>
-              ) : categorias.length === 0 ? (
-                <p className="no-data-listar">
-                  Nenhuma categoria encontrada
-                </p>
+                <p>Digite algo para buscar departamentos</p>
+              ) : departamentos.length === 0 ? (
+                <p>Nenhum departamento encontrado</p>
               ) : (
                 <table className="table-users-listar">
                   <thead>
                     <tr>
                       <th>Nome</th>
                       <th>Status</th>
-                      <th style={{ display: "flex", justifyContent: "center" }}>
-                        Ações
-                      </th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {categorias.map((cat) => (
-                      <tr key={cat.id}>
-                        <td>{cat.nome}</td>
-                        <td>{cat.status ? "Ativo" : "Inativo"}</td>
-                        <td style={{ display: "flex", justifyContent: "center" }}>
+                    {departamentos.map((dep) => (
+                      <tr key={dep.id}>
+                        <td>{dep.nome}</td>
+                        <td>{dep.status ? "Ativo" : "Inativo"}</td>
+                        <td>
                           <button
                             className="btn-editar"
-                            onClick={() => editarCategoria(cat)}
+                            onClick={() => editarDepartamento(dep)}
                           >
                             Editar
                           </button>
@@ -297,4 +278,4 @@ function AdminListarCategorias() {
   );
 }
 
-export default AdminListarCategorias;
+export default AdminCadastrarDepartamento;

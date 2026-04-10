@@ -1,16 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
-import AdminHome from "../pages/AdminHome";
+import AdminHome from "../pages/admin/AdminHome";
 
-// Usuários
-import AdminCadastroUsuarios from "../pages/AdminCadastroUsuario";
-import AdminListarUsuarios from "../pages/AdminListarUsuarios";
-
-// Produtos
-import AdminCadastroProdutos from "../pages/AdminCadastroProdutos";
-import AdminListarProdutos from "../pages/AdminListarProdutos";
-import AdminCadastrarCategoria from "../pages/AdminCadastrarCategorias";
+// Admin
+import AdminCadastroUsuarios from "../pages/admin/AdminCadastroUsuario";
+import AdminListarUsuarios from "../pages/admin/AdminListarUsuarios";
+import AdminCadastroProdutos from "../pages/admin/AdminCadastroProdutos";
+import AdminListarProdutos from "../pages/admin/AdminListarProdutos";
+import AdminCadastrarCategoria from "../pages/admin/AdminCadastrarCategorias";
+import AdminCadastrarDepartamento from "../pages/admin/AdminCadastrarDepartamento";
 
 // Usuário
 import UsuarioHome from "../pages/usuario/UsuarioHome";
@@ -27,6 +26,9 @@ function Rotas() {
         <Route path="/AdminCadastroProdutos" element={<AdminCadastroProdutos />} />       
         <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />    
         <Route path="/AdminCadastrarCategoria" element={<AdminCadastrarCategoria />} />   
+        <Route path="/AdminCadastrarDepartamento" element={<AdminCadastrarDepartamento />} />   
+
+
 
         // Usuário
         <Route path="/UsuarioHome" element={<UsuarioHome />} />
