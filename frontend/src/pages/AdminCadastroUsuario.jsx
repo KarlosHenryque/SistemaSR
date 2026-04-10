@@ -198,28 +198,6 @@ function AdminCadastroUsuarios() {
                             />
                         </div>
 
-                        <div className="status-container">
-                            <label>Status do usuário</label>
-
-                            <label className="switch">
-                                <input 
-                                    type="checkbox"
-                                    checked={form.ativo}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            ativo: e.target.checked
-                                        })
-                                    }
-                                />
-                                <span className="slider"></span>
-                            </label>
-
-                            <span className="status-text">
-                                {form.ativo ? "Ativo" : "Inativo"}
-                            </span>
-                        </div>
-
                         <button type="submit" disabled={loading}>
                             {loading ? "Cadastrando..." : "Cadastrar"}
                         </button>

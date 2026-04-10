@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { useState } from "react"; 
+import { useState, useEffect } from "react"; 
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/AdminCadastroUsuarios.css"; 
@@ -12,16 +12,18 @@ function AdminListarProdutos() {
     const [produtos, setProdutos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [buscou, setBuscou] = useState(false);
+    const [filtroStatus, setFiltroStatus] = useState("true"); // padrão: ativos
+
     const navigate = useNavigate();
 
     // Buscar produtos
-    async function buscarProdutos(valor = "") {
+    async function buscarProdutos(valor = "", status = filtroStatus) {
         try {
             setLoading(true);
             setBuscou(true);
 
             const response = await fetch(
-                `http://localhost:3000/produtos?busca=${valor}`
+                `http://localhost:3000/produtos?busca=${valor}&status=${status}`
             );
 
             const data = await response.json();
@@ -33,6 +35,10 @@ function AdminListarProdutos() {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        buscarProdutos("", "true");
+    }, []);
 
     // Editar produto
     async function editarProduto(prod) {
@@ -73,7 +79,7 @@ function AdminListarProdutos() {
 
             await Swal.fire("Sucesso!", "Produto atualizado!", "success");
 
-            buscarProdutos(busca || "%");
+            buscarProdutos(busca, filtroStatus);
 
         } catch (error) {
             Swal.fire("Erro", error.message, "error");
@@ -92,6 +98,18 @@ function AdminListarProdutos() {
                     <h1>Produtos Cadastrados</h1>
 
                     <div className="search-container-listar">
+                        <select
+                            className="SelectFiltro"
+                            value={filtroStatus}
+                            onChange={(e) => {
+                                setFiltroStatus(e.target.value);
+                                buscarProdutos(busca, e.target.value);
+                            }}
+                        >
+                            <option value="true">Ativos</option>
+                            <option value="false">Inativos</option>
+                        </select>
+
                         <input
                             type="text"
                             placeholder="Buscar por nome, categoria ou marca (use % para todos)"
@@ -99,12 +117,12 @@ function AdminListarProdutos() {
                             onChange={(e) => setBusca(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
-                                    buscarProdutos(busca);
+                                    buscarProdutos(busca, filtroStatus);
                                 }
                             }}
                         />
 
-                        <button onClick={() => buscarProdutos(busca)}>
+                        <button onClick={() => buscarProdutos(busca, filtroStatus)}>
                             Buscar
                         </button>
                     </div>
@@ -132,6 +150,7 @@ function AdminListarProdutos() {
                                             <th>Marca</th>
                                             <th>Preço</th>
                                             <th>Código</th>
+                                            <th>Status</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -156,6 +175,7 @@ function AdminListarProdutos() {
                                                 <td>{prod.marca}</td>
                                                 <td>R$ {prod.preco != null ? Number(prod.preco).toFixed(2) : "-"}</td>
                                                 <td>{prod.codigo}</td>
+                                                <td>{prod.status ? "Ativo" : "Inativo"}</td>
                                                 <td>
                                                     <button
                                                         className="btn-editar"

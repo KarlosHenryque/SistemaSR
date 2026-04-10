@@ -3,9 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const pool = require("../dataBase/db");
 
-// Listar clientes
+// Listar usuários com busca e filtro de status
 router.get("/", async (req, res) => {
-    const { busca } = req.query;
+    const { busca, status } = req.query;
 
     try {
         let query = `
@@ -13,35 +13,35 @@ router.get("/", async (req, res) => {
             FROM usuarios
             WHERE 1=1
         `;
-
         let values = [];
         let index = 1;
 
         if (busca && busca !== "%") {
-            query += `
-                AND (nome ILIKE $${index}
-                OR cpf_cnpj ILIKE $${index})
-            `;
+            query += ` AND (nome ILIKE $${index} OR cpf_cnpj ILIKE $${index})`;
             values.push(`%${busca}%`);
             index++;
         }
 
-        query += " ORDER BY nome";
+        if (status !== undefined) {
+            query += ` AND status = $${index}`;
+            values.push(status === "true");
+            index++;
+        }
 
+        query += " ORDER BY nome";
         const result = await pool.query(query, values);
         res.json(result.rows);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Erro ao buscar usuários" });
     }
 });
 
-// Editar
+// Editar usuário
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
-    const { nome, email, cpf_cnpj, tipo_usuario, senha, status } = req.body;    
-    
+    const { nome, email, cpf_cnpj, tipo_usuario, senha, status } = req.body;
+
     try {
         let query = `
             UPDATE usuarios
@@ -51,14 +51,12 @@ router.put("/:id", async (req, res) => {
                 tipo_usuario = $4,
                 status = $5
         `;
-
         let values = [nome, email, cpf_cnpj, tipo_usuario, status];
         let index = 6;
 
         if (senha && senha.trim() !== "") {
             const saltRounds = 10;
             const senhaHash = await bcrypt.hash(senha, saltRounds);
-
             query += `, senha = $${index}`;
             values.push(senhaHash);
             index++;
@@ -68,9 +66,7 @@ router.put("/:id", async (req, res) => {
         values.push(id);
 
         const result = await pool.query(query, values);
-
         res.json(result.rows[0]);
-
     } catch (error) {
         console.error("Erro ao atualizar:", error);
         res.status(500).json({ error: "Erro ao atualizar usuário" });

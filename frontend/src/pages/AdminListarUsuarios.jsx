@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { useState } from "react"; 
+import { useState, useEffect } from "react"; 
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/AdminListarUsuarios.css";
@@ -7,25 +7,30 @@ import { editarUsuarioModal } from "../utils/swalForms.js";
 import LayoutAdmin from "../assets/components/LayoutAdmin";
 
 function AdminListarUsuarios() {
-
     const [busca, setBusca] = useState("");
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(false);
     const [buscou, setBuscou] = useState(false);
+    const [filtroStatus, setFiltroStatus] = useState("true"); // ✅ filtroStatus
     const navigate = useNavigate();
 
-    async function buscarUsuarios(valor = "") {
+    // Carrega usuários ativos por padrão
+    useEffect(() => {
+        buscarUsuarios("", filtroStatus);
+    }, []);
+
+    // Função para buscar usuários
+    async function buscarUsuarios(valor = "", status = filtroStatus) {
         try {
             setLoading(true);
             setBuscou(true);
 
             const response = await fetch(
-                `http://localhost:3000/usuarios?busca=${valor}`
+                `http://localhost:3000/usuarios?busca=${valor}&status=${status}`
             );
 
             const data = await response.json();
             setUsuarios(data);
-
         } catch (error) {
             console.error("Erro ao buscar usuários:", error);
         } finally {
@@ -33,9 +38,9 @@ function AdminListarUsuarios() {
         }
     }
 
+    // Editar usuário
     async function editarUsuario(user) {
         const formValues = await editarUsuarioModal(user);
-
         if (!formValues) return;
 
         const confirm = await Swal.fire({
@@ -56,23 +61,16 @@ function AdminListarUsuarios() {
                 `http://localhost:3000/usuarios/${user.id}`,
                 {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formValues)
                 }
             );
 
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
+            if (!response.ok) throw new Error(data.error);
 
             await Swal.fire("Sucesso!", "Usuário atualizado!", "success");
-
-            buscarUsuarios(busca || "%");
-
+            buscarUsuarios(busca, filtroStatus); // ✅ atualiza lista
         } catch (error) {
             Swal.fire("Erro", error.message, "error");
         }
@@ -90,19 +88,29 @@ function AdminListarUsuarios() {
                     <h1>Usuários Cadastrados</h1>
 
                     <div className="search-container-listar">
+                        <select
+                            className="SelectFiltro"
+                            value={filtroStatus}
+                            onChange={(e) => {
+                                setFiltroStatus(e.target.value);
+                                buscarUsuarios(busca, e.target.value);
+                            }}
+                        >
+                            <option value="true">Ativos</option>
+                            <option value="false">Inativos</option>
+                        </select>
+
                         <input
                             type="text"
                             placeholder="Buscar por nome ou CPF/CNPJ (use % para todos)"
                             value={busca}
                             onChange={(e) => setBusca(e.target.value)}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    buscarUsuarios(busca);
-                                }
+                                if (e.key === "Enter") buscarUsuarios(busca, filtroStatus);
                             }}
                         />
 
-                        <button onClick={() => buscarUsuarios(busca)}>
+                        <button onClick={() => buscarUsuarios(busca, filtroStatus)}>
                             Buscar
                         </button>
                     </div>
@@ -127,10 +135,10 @@ function AdminListarUsuarios() {
                                             <th>Email</th>
                                             <th>CPF/CNPJ</th>
                                             <th>Tipo</th>
+                                            <th>Status</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         {usuarios.map((user) => (
                                             <tr key={user.id}>
@@ -138,6 +146,7 @@ function AdminListarUsuarios() {
                                                 <td>{user.email}</td>
                                                 <td>{user.cpf_cnpj}</td>
                                                 <td>{user.tipo_usuario}</td>
+                                                <td>{user.status ? "Ativo" : "Inativo"}</td>
                                                 <td>
                                                     <button
                                                         className="btn-editar"
@@ -153,7 +162,6 @@ function AdminListarUsuarios() {
                             )}
                         </>
                     )}
-
                 </div>
             </div>
         </LayoutAdmin>
