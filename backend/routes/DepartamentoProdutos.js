@@ -63,6 +63,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/ativos", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM departamentos WHERE status = true ORDER BY nome"
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao buscar departamentos ativos" });
+  }
+});
+
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, status } = req.body;

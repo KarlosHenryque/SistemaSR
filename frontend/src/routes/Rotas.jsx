@@ -13,28 +13,32 @@ import AdminCadastrarDepartamento from "../pages/admin/CadastrarDepartamento";
 import AdminCadastrarMarca from "../pages/admin/CadastrarMarca";
 
 // Usuário
-import UsuarioHome from "../pages/usuario/UsuarioHome";
+import UsuarioHome from "../pages/usuario/Home";
+import ProdutosDepartamento from "../pages/usuario/Produtos"; 
+import ProdutoDetalhes from "../pages/usuario/ProdutoDetalhes";
 
 function Rotas() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
 
+        {/* ADMIN */}
         <Route path="/AdminHome" element={<AdminHome />} />
         <Route path="/AdminListarUsuarios" element={<AdminListarUsuarios />} />
-        <Route path="/AdminCadastroUsuarios" element={<AdminCadastroUsuarios />} />       
-        <Route path="/AdminCadastroProdutos" element={<AdminCadastroProdutos />} />       
-        <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />    
-        <Route path="/AdminCadastrarCategoria" element={<AdminCadastrarCategoria />} />   
-        <Route path="/AdminCadastrarDepartamento" element={<AdminCadastrarDepartamento />} />   
+        <Route path="/AdminCadastroUsuarios" element={<AdminCadastroUsuarios />} />
+        <Route path="/AdminCadastroProdutos" element={<AdminCadastroProdutos />} />
+        <Route path="/AdminListarProdutos" element={<AdminListarProdutos />} />
+        <Route path="/AdminCadastrarCategoria" element={<AdminCadastrarCategoria />} />
+        <Route path="/AdminCadastrarDepartamento" element={<AdminCadastrarDepartamento />} />
         <Route path="/AdminCadastrarMarca" element={<AdminCadastrarMarca />} />
 
-
-
-        // Usuário
+        {/* USUÁRIO */}
         <Route path="/UsuarioHome" element={<UsuarioHome />} />
-        
+        <Route path="/produtos/:id" element={<ProdutosDepartamento />} />
+        <Route path="/produto/:id" element={<ProdutoDetalhes />} />
+
       </Routes>
     </BrowserRouter>
   );
