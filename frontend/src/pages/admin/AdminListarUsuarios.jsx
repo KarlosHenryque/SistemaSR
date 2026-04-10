@@ -2,9 +2,9 @@ import Swal from "sweetalert2";
 import { useState, useEffect } from "react"; 
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "../assets/css/admin/AdminListarUsuarios.css";
-import { editarUsuarioModal } from "../utils/swalForms.js";
-import LayoutAdmin from "../assets/components/LayoutAdmin";
+import "../../assets/css/admin/AdminListarUsuarios.css";
+import { editarUsuarioModal } from "../../utils/swalFormsUsuario.js";
+import LayoutAdmin from "../../assets/components/LayoutAdmin";
 
 function AdminListarUsuarios() {
     const [busca, setBusca] = useState("");

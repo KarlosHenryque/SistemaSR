@@ -1,20 +1,40 @@
 import Swal from "sweetalert2";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "../assets/css/admin/AdminCadastroUsuarios.css";
-import { editarProdutoModal } from "../utils/swalFormsProdutos.js"; 
-import LayoutAdmin from "../assets/components/LayoutAdmin";
+import "../../assets/css/admin/AdminCadastroUsuarios.css";
+import LayoutAdmin from "../../assets/components/LayoutAdmin";
+import { editarProdutoModal } from "../../utils/swalFormsProdutos.js";
 
 function AdminListarProdutos() {
-
     const [busca, setBusca] = useState("");
     const [produtos, setProdutos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [buscou, setBuscou] = useState(false);
-    const [filtroStatus, setFiltroStatus] = useState("true"); 
+    const [filtroStatus, setFiltroStatus] = useState("true");
+
+    const [categorias, setCategorias] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const [catRes, depRes] = await Promise.all([
+                    fetch("http://localhost:3000/categorias"),
+                    fetch("http://localhost:3000/departamentos")
+                ]);
+
+                setCategorias(await catRes.json());
+                setDepartamentos(await depRes.json());
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        }
+
+        fetchData();
+    }, []);
 
     async function buscarProdutos(valor = "", status = filtroStatus) {
         try {
@@ -40,7 +60,7 @@ function AdminListarProdutos() {
     }, []);
 
     async function editarProduto(prod) {
-        const formValues = await editarProdutoModal(prod); 
+        const formValues = await editarProdutoModal(prod, categorias, departamentos);
 
         if (!formValues) return;
 
@@ -62,9 +82,7 @@ function AdminListarProdutos() {
                 `http://localhost:3000/produtos/${prod.id}`,
                 {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formValues)
                 }
             );
@@ -82,6 +100,13 @@ function AdminListarProdutos() {
         } catch (error) {
             Swal.fire("Erro", error.message, "error");
         }
+    }
+
+    function limitarTexto(texto, limite = 5) {
+        if (!texto) return "-";
+        return texto.length > limite
+            ? texto.substring(0, limite) + "..."
+            : texto;
     }
 
     return (
@@ -110,7 +135,7 @@ function AdminListarProdutos() {
 
                         <input
                             type="text"
-                            placeholder="Buscar por nome, categoria ou marca (use % para todos)"
+                            placeholder="Buscar produtos"
                             value={busca}
                             onChange={(e) => setBusca(e.target.value)}
                             onKeyDown={(e) => {
@@ -130,13 +155,9 @@ function AdminListarProdutos() {
                     {!loading && (
                         <>
                             {!buscou ? (
-                                <p className="no-data-listar">
-                                    Digite algo para buscar produtos
-                                </p>
+                                <p>Digite algo para buscar produtos</p>
                             ) : produtos.length === 0 ? (
-                                <p className="no-data-listar">
-                                    Nenhum produto encontrado
-                                </p>
+                                <p>Nenhum produto encontrado</p>
                             ) : (
                                 <table className="table-users-listar">
                                     <thead>
@@ -145,6 +166,7 @@ function AdminListarProdutos() {
                                             <th>Nome</th>
                                             <th>Descrição</th>
                                             <th>Categoria</th>
+                                            <th>Departamento</th>
                                             <th>Marca</th>
                                             <th>Preço</th>
                                             <th>Código</th>
@@ -158,22 +180,23 @@ function AdminListarProdutos() {
                                             <tr key={prod.id}>
                                                 <td>
                                                     {prod.imagem ? (
-                                                        <img 
-                                                            src={prod.imagem} 
-                                                            alt={prod.nome} 
-                                                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                                                        />
-                                                    ) : (
-                                                        "Sem imagem"
-                                                    )}
+                                                        <img src={prod.imagem} width="50" />
+                                                    ) : "Sem imagem"}
                                                 </td>
-                                                <td>{prod.nome}</td>
-                                                <td>{prod.descricao}</td>
+                                                <td title={prod.nome}>
+                                                    {limitarTexto(prod.nome, 10)}
+                                                </td>
+
+                                                <td title={prod.descricao}>
+                                                    {limitarTexto(prod.descricao, 10)}
+                                                </td>
                                                 <td>{prod.categoria}</td>
+                                                <td>{prod.departamento}</td>
                                                 <td>{prod.marca}</td>
-                                                <td>R$ {prod.preco != null ? Number(prod.preco).toFixed(2) : "-"}</td>
+                                                <td>R$ {Number(prod.preco).toFixed(2)}</td>
                                                 <td>{prod.codigo}</td>
                                                 <td>{prod.status ? "Ativo" : "Inativo"}</td>
+
                                                 <td>
                                                     <button
                                                         className="btn-editar"

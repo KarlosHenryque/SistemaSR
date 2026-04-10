@@ -2,8 +2,8 @@ import Swal from "sweetalert2";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "../assets/css/admin/AdminCadastroUsuarios.css";
-import LayoutAdmin from "../assets/components/LayoutAdmin";
+import "../../assets/css/admin/AdminCadastroUsuarios.css";
+import LayoutAdmin from "../../assets/components/LayoutAdmin";
 
 function AdminCadastroUsuarios() {
 

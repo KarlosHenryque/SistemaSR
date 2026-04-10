@@ -2,36 +2,45 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../dataBase/db");
 
-// Listar produtos com busca + filtro de status
 router.get("/", async (req, res) => {
   const { busca, status } = req.query;
 
   try {
     let query = `
-      SELECT p.id, p.nome, p.descricao, p.marca, p.preco, p.codigo,
-             p.imagem, p.imagem_tipo,
-             p.status,
-             c.nome AS categoria
+      SELECT 
+        p.id,
+        p.nome,
+        p.descricao,
+        p.marca,
+        p.preco,
+        p.codigo,
+        p.imagem,
+        p.imagem_tipo,
+        p.status,
+        c.nome AS categoria,
+        d.nome AS departamento
       FROM produtos p
       JOIN categorias c ON p.categoria_id = c.id
+      JOIN departamentos d ON p.departamento_id = d.id
       WHERE 1=1
     `;
 
     const values = [];
     let index = 1;
 
-    // 🔍 Filtro de busca
     if (busca && busca !== "%") {
       query += `
-        AND (p.nome ILIKE $${index} 
-        OR c.nome ILIKE $${index} 
-        OR p.marca ILIKE $${index})
+        AND (
+          p.nome ILIKE $${index}
+          OR c.nome ILIKE $${index}
+          OR d.nome ILIKE $${index}
+          OR p.marca ILIKE $${index}
+        )
       `;
       values.push(`%${busca}%`);
       index++;
     }
 
-    // ✅ Filtro de status (ATIVO / INATIVO)
     if (status !== undefined) {
       query += ` AND p.status = $${index}`;
       values.push(status === "true");
@@ -57,27 +66,49 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Editar produto
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, marca, preco, codigo, status } = req.body;
+  const {
+    nome,
+    descricao,
+    marca,
+    preco,
+    codigo,
+    status,
+    categoria_id,
+    departamento_id
+  } = req.body;
 
   try {
     const statusBoolean = status === true || status === "true";
 
     const query = `
       UPDATE produtos
-      SET nome = $1,
-          descricao = $2,
-          marca = $3,
-          preco = $4,
-          codigo = $5,
-          status = $6
-      WHERE id = $7
+      SET 
+        nome = $1,
+        descricao = $2,
+        marca = $3,
+        preco = $4,
+        codigo = $5,
+        status = $6,
+        categoria_id = $7,
+        departamento_id = $8
+      WHERE id = $9
       RETURNING *
     `;
 
-    const values = [nome, descricao, marca, preco, codigo, statusBoolean, id];
+    const values = [
+      nome,
+      descricao,
+      marca,
+      preco,
+      codigo,
+      statusBoolean,
+      categoria_id,
+      departamento_id,
+      id
+    ];
+
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
@@ -92,7 +123,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Ativar/desativar produto
 router.patch("/status/:id", async (req, res) => {
   const { id } = req.params;
   let { status } = req.body;

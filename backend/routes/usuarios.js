@@ -3,7 +3,6 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const pool = require("../dataBase/db");
 
-// Listar usuários com busca e filtro de status
 router.get("/", async (req, res) => {
     const { busca, status } = req.query;
 
@@ -37,7 +36,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Editar usuário
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { nome, email, cpf_cnpj, tipo_usuario, senha, status } = req.body;
