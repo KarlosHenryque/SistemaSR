@@ -10,33 +10,34 @@ function AdminCadastrarProdutos() {
     nome: "",
     descricao: "",
     categoria_id: "",
-    departamento_id: "", 
-    marca: "",
+    departamento_id: "",
+    marca_id: "",
     preco: "",
     codigo: "",
     imagem: null
   });
 
   const [categorias, setCategorias] = useState([]);
-  const [departamentos, setDepartamentos] = useState([]); 
+  const [departamentos, setDepartamentos] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-
+  
   useEffect(() => {
     async function fetchData() {
       try {
-        const [catRes, depRes] = await Promise.all([
+        const [catRes, depRes, marcaRes] = await Promise.all([
           fetch("http://localhost:3000/categorias"),
-          fetch("http://localhost:3000/departamentos")
+          fetch("http://localhost:3000/departamentos"),
+          fetch("http://localhost:3000/marcas")
         ]);
 
-        const catData = await catRes.json();
-        const depData = await depRes.json();
+        setCategorias(await catRes.json());
+        setDepartamentos(await depRes.json());
+        setMarcas(await marcaRes.json());
 
-        setCategorias(catData);
-        setDepartamentos(depData);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
@@ -47,17 +48,11 @@ function AdminCadastrarProdutos() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value
-    });
+    setForm({ ...form, [name]: value });
   }
 
   function handleFileChange(e) {
-    setForm({
-      ...form,
-      imagem: e.target.files[0]
-    });
+    setForm({ ...form, imagem: e.target.files[0] });
   }
 
   async function handleSubmit(e) {
@@ -68,7 +63,8 @@ function AdminCadastrarProdutos() {
       !form.preco ||
       !form.codigo ||
       !form.categoria_id ||
-      !form.departamento_id 
+      !form.departamento_id ||
+      !form.marca_id
     ) {
       Swal.fire({
         icon: "error",
@@ -85,8 +81,8 @@ function AdminCadastrarProdutos() {
       formData.append("nome", form.nome);
       formData.append("descricao", form.descricao);
       formData.append("categoria_id", form.categoria_id);
-      formData.append("departamento_id", form.departamento_id); 
-      formData.append("marca", form.marca);
+      formData.append("departamento_id", form.departamento_id);
+      formData.append("marca_id", form.marca_id);
       formData.append("preco", form.preco);
       formData.append("codigo", form.codigo);
 
@@ -115,8 +111,8 @@ function AdminCadastrarProdutos() {
         nome: "",
         descricao: "",
         categoria_id: "",
-        departamento_id: "", 
-        marca: "",
+        departamento_id: "",
+        marca_id: "",
         preco: "",
         codigo: "",
         imagem: null
@@ -208,12 +204,19 @@ function AdminCadastrarProdutos() {
 
             <div className="form-group">
               <label>Marca:</label>
-              <input
-                type="text"
-                name="marca"
-                value={form.marca}
+              <select
+                name="marca_id"
+                value={form.marca_id}
                 onChange={handleChange}
-              />
+                required
+              >
+                <option value="">Selecione uma marca</option>
+                {marcas.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nome}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
