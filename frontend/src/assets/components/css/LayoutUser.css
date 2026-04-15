@@ -6,8 +6,10 @@
   padding: 16px 30px;
   color: white;
   position: relative;
+  z-index: 10;
 }
 
+/* LEFT */
 .LayoutUser-left {
   display: flex;
   align-items: center;
@@ -30,24 +32,46 @@
   top: 55px;
   left: 0;
   background: #fff;
-  width: 240px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  padding: 8px 0;
+  width: 280px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  padding: 10px 0;
   z-index: 999;
-  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.dropdown-item {
-  padding: 12px 16px;
-  cursor: pointer;
-  color: #000;
+.dropdown-dep {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-dep strong {
+  display: block;
   font-size: 15px;
-  transition: background 0.2s ease;
+  color: #111;
+  margin-bottom: 6px;
 }
 
-.dropdown-item:hover {
+.dropdown-cat {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  gap: 4px;
+}
+
+.dropdown-cat div {
+  font-size: 14px;
+  color: #444;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.dropdown-cat div:hover {
   background: #f2f2f2;
+  color: #0f2f6b;
 }
 
 .LayoutUser-center {
@@ -68,9 +92,8 @@
 }
 
 .LayoutUser-center button {
-  background: #ffffff;
+  background: #fff;
   border: none;
-  color: white;
   padding: 12px 18px;
   display: flex;
   align-items: center;

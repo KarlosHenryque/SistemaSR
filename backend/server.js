@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // Importar rotas
+// Admin
 const login = require("./routes/login");
 const usuarios = require("./routes/usuarios");
 const produtos = require("./routes/produtos");
@@ -17,6 +18,11 @@ const cadastrarCategoriaProduto = require("./routes/CategoriaProduto");
 const cadastrarDepartamentoProdutos = require("./routes/DepartamentoProdutos");
 const marcaProdutos = require("./routes/marcaProdutos");
 
+// Usuário
+const menu = require("./routes/Client/menu");
+const produtoCategoria = require("./routes/Client/produtoCategoria");
+
+// Settar rotas
 // Admin
 app.use("/login", login);
 app.use("/usuarios", usuarios);
@@ -26,6 +32,10 @@ app.use("/cadastrarProdutos", cadastrarProdutos);
 app.use("/categorias", cadastrarCategoriaProduto);
 app.use("/departamentos", cadastrarDepartamentoProdutos);
 app.use("/marcas", marcaProdutos);
+
+// Usuário
+app.use("/menu", menu);
+app.use("/produtos/categoria", produtoCategoria);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
