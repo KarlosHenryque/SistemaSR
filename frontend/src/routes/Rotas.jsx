@@ -15,6 +15,7 @@ import AdminCadastrarMarca from "../pages/admin/CadastrarMarca";
 // Usuário
 import UsuarioHome from "../pages/usuario/Home";
 import CategoriaProdutos from "../pages/usuario/CategoriaProdutos";
+import DetalheProdutos from "../pages/usuario/DetalheProduto";
 
 function Rotas() {
   return (
@@ -36,7 +37,7 @@ function Rotas() {
         {/* USUÁRIO */}
         <Route path="/UsuarioHome" element={<UsuarioHome />} />
         <Route path="/categoria/:id" element={<CategoriaProdutos />} />
-
+        <Route path="/produto/:id" element={<DetalheProdutos />} />
 
       </Routes>
     </BrowserRouter>

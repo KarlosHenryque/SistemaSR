@@ -1,13 +1,14 @@
 import LayoutUser from "../../assets/components/LayoutUser";
 import "../../assets/css/usuario/categoriaProdutos.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 function CategoriaProdutos() {
   const { id } = useParams();
   const [produtos, setProdutos] = useState([]);
-  const [qtd, setQtd] = useState({});
+  const [qtd, setQtd] = useState(location.state?.quantidade || 1);
+  const navigate = useNavigate();
 
     useEffect(() => {
     async function load() {
@@ -58,6 +59,12 @@ function CategoriaProdutos() {
     }));
   }
 
+  function irParaDetalhes(id) {
+    navigate(`/produto/${id}`, {
+      state: { quantidade: qtd[id] || 1 },
+    });
+  }
+
   return (
     <LayoutUser>
       <div className="cat-container">
@@ -84,7 +91,9 @@ function CategoriaProdutos() {
                 <button onClick={() => aumentar(p.id)}>+</button>
               </div>
 
-              <button className="cat-btn">ADICIONAR</button>
+              <button className="cat-btn" onClick={() => irParaDetalhes(p.id)}>
+                ADICIONAR
+              </button>
             </div>
           ))}
         </div>
