@@ -136,7 +136,11 @@ function AdminCadastrarMarca() {
       title: "Confirmar alteração?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Salvar"
+      reverseButtons: true,
+      confirmButtonText: "Salvar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#052364",
+      cancelButtonColor: "#ff4d4d",
     });
 
     if (!confirm.isConfirmed) return;

@@ -11,12 +11,14 @@ router.get("/", async (req, res) => {
         p.id,
         p.nome,
         p.descricao,
-        p.marca,
         p.preco,
         p.codigo,
         p.imagem,
         p.imagem_tipo,
         p.status,
+        p.marca_id,
+        p.categoria_id,
+        p.departamento_id,
         c.nome AS categoria,
         d.nome AS departamento
       FROM produtos p
@@ -34,7 +36,6 @@ router.get("/", async (req, res) => {
           p.nome ILIKE $${index}
           OR c.nome ILIKE $${index}
           OR d.nome ILIKE $${index}
-          OR p.marca ILIKE $${index}
         )
       `;
       values.push(`%${busca}%`);
@@ -51,7 +52,7 @@ router.get("/", async (req, res) => {
 
     const result = await pool.query(query, values);
 
-    const produtos = result.rows.map(prod => ({
+    const produtos = result.rows.map((prod) => ({
       ...prod,
       imagem: prod.imagem
         ? `data:${prod.imagem_tipo};base64,${prod.imagem.toString("base64")}`
@@ -59,9 +60,7 @@ router.get("/", async (req, res) => {
     }));
 
     res.json(produtos);
-
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Erro ao buscar produtos" });
   }
 });
@@ -71,12 +70,12 @@ router.put("/:id", async (req, res) => {
   const {
     nome,
     descricao,
-    marca,
     preco,
     codigo,
     status,
     categoria_id,
-    departamento_id
+    departamento_id,
+    marca_id
   } = req.body;
 
   try {
@@ -87,12 +86,12 @@ router.put("/:id", async (req, res) => {
       SET 
         nome = $1,
         descricao = $2,
-        marca = $3,
-        preco = $4,
-        codigo = $5,
-        status = $6,
-        categoria_id = $7,
-        departamento_id = $8
+        preco = $3,
+        codigo = $4,
+        status = $5,
+        categoria_id = $6,
+        departamento_id = $7,
+        marca_id = $8
       WHERE id = $9
       RETURNING *
     `;
@@ -100,12 +99,12 @@ router.put("/:id", async (req, res) => {
     const values = [
       nome,
       descricao,
-      marca,
       preco,
       codigo,
       statusBoolean,
       categoria_id,
       departamento_id,
+      marca_id,
       id
     ];
 
@@ -116,9 +115,7 @@ router.put("/:id", async (req, res) => {
     }
 
     res.json(result.rows[0]);
-
   } catch (error) {
-    console.error("Erro ao atualizar produto:", error);
     res.status(500).json({ error: "Erro ao atualizar produto" });
   }
 });
@@ -140,9 +137,7 @@ router.patch("/status/:id", async (req, res) => {
     }
 
     res.json(result.rows[0]);
-
   } catch (error) {
-    console.error("Erro ao atualizar status do produto:", error);
     res.status(500).json({ error: "Erro ao atualizar status do produto" });
   }
 });

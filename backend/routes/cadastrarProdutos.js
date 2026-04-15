@@ -35,20 +35,29 @@ router.post("/", uploadMiddleware, async (req, res) => {
       codigo,
     } = req.body;
 
-    if (!nome || !preco || !codigo || !categoria_id || !departamento_id || !marca_id) {
-      return res.status(400).json({
-        erro: "Nome, preço, código, categoria, departamento e marca são obrigatórios",
-      });
-    }
+    console.log("BODY RECEBIDO:", req.body);
 
+    const categoriaId = parseInt(categoria_id);
+    const departamentoId = parseInt(departamento_id);
+    const marcaId = parseInt(marca_id);
     const precoNumber = parseFloat(preco);
-    if (isNaN(precoNumber)) {
-      return res.status(400).json({ erro: "Preço inválido" });
+
+    if (
+      !nome ||
+      !codigo ||
+      isNaN(categoriaId) ||
+      isNaN(departamentoId) ||
+      isNaN(marcaId) ||
+      isNaN(precoNumber)
+    ) {
+      return res.status(400).json({
+        erro: "Nome, código, preço, categoria, departamento e marca são obrigatórios",
+      });
     }
 
     const categoriaCheck = await pool.query(
       "SELECT id FROM categorias WHERE id = $1",
-      [categoria_id]
+      [categoriaId]
     );
 
     if (categoriaCheck.rows.length === 0) {
@@ -57,7 +66,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
 
     const departamentoCheck = await pool.query(
       "SELECT id FROM departamentos WHERE id = $1",
-      [departamento_id]
+      [departamentoId]
     );
 
     if (departamentoCheck.rows.length === 0) {
@@ -66,7 +75,7 @@ router.post("/", uploadMiddleware, async (req, res) => {
 
     const marcaCheck = await pool.query(
       "SELECT id FROM marca WHERE id = $1",
-      [marca_id]
+      [marcaId]
     );
 
     if (marcaCheck.rows.length === 0) {
@@ -95,9 +104,9 @@ router.post("/", uploadMiddleware, async (req, res) => {
     const values = [
       nome,
       descricao,
-      categoria_id,
-      departamento_id,
-      marca_id,
+      categoriaId,
+      departamentoId,
+      marcaId,
       precoNumber,
       codigo,
       imagem,

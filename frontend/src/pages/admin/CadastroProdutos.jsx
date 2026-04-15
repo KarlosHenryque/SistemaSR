@@ -14,62 +14,91 @@ function AdminCadastrarProdutos() {
     marca_id: "",
     preco: "",
     codigo: "",
-    imagem: null
+    imagem: null,
   });
 
   const [categorias, setCategorias] = useState([]);
+  const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  
+
   useEffect(() => {
     async function fetchData() {
-      try {
-        const [catRes, depRes, marcaRes] = await Promise.all([
-          fetch("http://localhost:3000/categorias"),
-          fetch("http://localhost:3000/departamentos"),
-          fetch("http://localhost:3000/marcas")
-        ]);
+      const [catRes, depRes, marcaRes] = await Promise.all([
+        fetch("http://localhost:3000/categorias/ativos"),
+        fetch("http://localhost:3000/departamentos/ativos"),
+        fetch("http://localhost:3000/marcas/ativos"),
+      ]);
 
-        setCategorias(await catRes.json());
-        setDepartamentos(await depRes.json());
-        setMarcas(await marcaRes.json());
-
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
+      setCategorias(await catRes.json());
+      setDepartamentos(await depRes.json());
+      setMarcas(await marcaRes.json());
     }
 
-    fetchData();
+    fetchData().catch((err) =>
+      console.error("Erro ao buscar dados:", err)
+    );
   }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "departamento_id") {
+      if (!value) {
+        setCategoriasFiltradas([]);
+        setForm((prev) => ({
+          ...prev,
+          categoria_id: "",
+        }));
+        return;
+      }
+
+      const filtradas = categorias.filter(
+        (cat) => String(cat.departamento_id) === String(value)
+      );
+
+      setCategoriasFiltradas(filtradas);
+
+      setForm((prev) => ({
+        ...prev,
+        categoria_id: "",
+      }));
+    }
   }
 
   function handleFileChange(e) {
-    setForm({ ...form, imagem: e.target.files[0] });
+    setForm((prev) => ({
+      ...prev,
+      imagem: e.target.files[0],
+    }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const precoNumber = parseFloat(form.preco);
+
     if (
       !form.nome ||
-      !form.preco ||
       !form.codigo ||
       !form.categoria_id ||
       !form.departamento_id ||
-      !form.marca_id
+      !form.marca_id ||
+      isNaN(precoNumber)
     ) {
       Swal.fire({
         icon: "error",
         title: "Campos obrigatórios",
-        text: "Preencha todos os campos obrigatórios."
+        text: "Preencha todos os campos corretamente.",
       });
       return;
     }
@@ -83,17 +112,20 @@ function AdminCadastrarProdutos() {
       formData.append("categoria_id", form.categoria_id);
       formData.append("departamento_id", form.departamento_id);
       formData.append("marca_id", form.marca_id);
-      formData.append("preco", form.preco);
+      formData.append("preco", precoNumber);
       formData.append("codigo", form.codigo);
 
       if (form.imagem) {
         formData.append("imagem", form.imagem);
       }
 
-      const response = await fetch("http://localhost:3000/cadastrarProdutos", {
-        method: "POST",
-        body: formData
-      });
+      const response = await fetch(
+        "http://localhost:3000/cadastrarProdutos",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
@@ -104,7 +136,8 @@ function AdminCadastrarProdutos() {
       await Swal.fire({
         icon: "success",
         title: "Sucesso!",
-        text: "Produto cadastrado com sucesso!"
+        text: "Produto cadastrado com sucesso!",
+        confirmButtonColor: "#052364",
       });
 
       setForm({
@@ -115,20 +148,21 @@ function AdminCadastrarProdutos() {
         marca_id: "",
         preco: "",
         codigo: "",
-        imagem: null
+        imagem: null,
       });
+
+      setCategoriasFiltradas([]);
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
 
       navigate("/AdminHome");
-
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Erro",
-        text: error.message
+        text: error.message,
       });
     } finally {
       setLoading(false);
@@ -139,7 +173,6 @@ function AdminCadastrarProdutos() {
     <LayoutAdmin>
       <div className="page-container">
         <div className="form-container">
-
           <div className="close-button" onClick={() => navigate("/AdminHome")}>
             <FaTimes />
           </div>
@@ -147,7 +180,6 @@ function AdminCadastrarProdutos() {
           <h1>Cadastro de Produtos</h1>
 
           <form className="form-admin" onSubmit={handleSubmit}>
-
             <div className="form-group">
               <label>Nome:</label>
               <input
@@ -155,7 +187,6 @@ function AdminCadastrarProdutos() {
                 name="nome"
                 value={form.nome}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -169,29 +200,11 @@ function AdminCadastrarProdutos() {
             </div>
 
             <div className="form-group">
-              <label>Categoria:</label>
-              <select
-                name="categoria_id"
-                value={form.categoria_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecione uma categoria</option>
-                {categorias.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
               <label>Departamento:</label>
               <select
                 name="departamento_id"
                 value={form.departamento_id}
                 onChange={handleChange}
-                required
               >
                 <option value="">Selecione um departamento</option>
                 {departamentos.map((dep) => (
@@ -203,12 +216,29 @@ function AdminCadastrarProdutos() {
             </div>
 
             <div className="form-group">
+              <label>Categoria:</label>
+              <select
+                name="categoria_id"
+                value={form.categoria_id}
+                onChange={handleChange}
+                disabled={!form.departamento_id}
+              >
+                <option value="">Selecione uma categoria</option>
+
+                {categoriasFiltradas.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
               <label>Marca:</label>
               <select
                 name="marca_id"
                 value={form.marca_id}
                 onChange={handleChange}
-                required
               >
                 <option value="">Selecione uma marca</option>
                 {marcas.map((m) => (
@@ -227,7 +257,6 @@ function AdminCadastrarProdutos() {
                 name="preco"
                 value={form.preco}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -238,12 +267,11 @@ function AdminCadastrarProdutos() {
                 name="codigo"
                 value={form.codigo}
                 onChange={handleChange}
-                required
               />
             </div>
 
             <div className="form-group">
-              <label>Imagem (PNG ou JPEG):</label>
+              <label>Imagem:</label>
               <input
                 type="file"
                 accept="image/png, image/jpeg"
@@ -255,7 +283,6 @@ function AdminCadastrarProdutos() {
             <button type="submit" disabled={loading}>
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
-
           </form>
         </div>
       </div>
