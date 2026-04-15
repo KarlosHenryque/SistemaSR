@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../dataBase/db");
 
-// =====================
-// CREATE
-// =====================
 router.post("/", async (req, res) => {
   const { nome, status, departamento_id } = req.body;
 
@@ -40,9 +37,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// =====================
-// GET ALL (COM JOIN)
-// =====================
 router.get("/", async (req, res) => {
   const { busca, status } = req.query;
 
@@ -84,9 +78,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// =====================
-// GET ATIVOS (IMPORTANTE)
-// =====================
 router.get("/ativos", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -108,9 +99,6 @@ router.get("/ativos", async (req, res) => {
   }
 });
 
-// =====================
-// UPDATE
-// =====================
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, status, departamento_id } = req.body;

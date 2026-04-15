@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../dataBase/db");
 
-// CREATE
 router.post("/", async (req, res) => {
   const { nome, status } = req.body;
 
@@ -23,7 +22,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET ALL (COM FILTRO)
 router.get("/", async (req, res) => {
   try {
     const { status } = req.query;
@@ -46,7 +44,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET ATIVOS (USO NO FRONTEND)
 router.get("/ativos", async (req, res) => {
   try {
     const result = await pool.query(
@@ -60,7 +57,6 @@ router.get("/ativos", async (req, res) => {
   }
 });
 
-// UPDATE
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, status } = req.body;
