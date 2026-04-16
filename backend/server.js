@@ -22,6 +22,7 @@ const marcaProdutos = require("./routes/marcaProdutos");
 const menu = require("./routes/Client/menu");
 const produtoCategoria = require("./routes/Client/produtoCategoria");
 const detalheProduto = require("./routes/Client/DetalheProduto");
+const carrinho = require("./routes/Client/carrinho");
 
 // Settar rotas
 // Admin
@@ -38,6 +39,7 @@ app.use("/marcas", marcaProdutos);
 app.use("/menu", menu);
 app.use("/produtos/categoria", produtoCategoria);
 app.use("/produtos/departamento", detalheProduto);
+app.use("/carrinho", carrinho);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

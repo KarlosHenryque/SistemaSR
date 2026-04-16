@@ -6,6 +6,7 @@ import "./css/LayoutUser.css";
 function LayoutUser({ children }) {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
   const [departamentoAberto, setDepartamentoAberto] = useState(null);
 
   const menuRef = useRef(null);
@@ -35,6 +36,28 @@ function LayoutUser({ children }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    async function loadCart() {
+      const usuario_id = localStorage.getItem("usuario_id");
+
+      if (!usuario_id) return;
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/carrinho/${usuario_id}`
+        );
+
+        const data = await res.json();
+
+        setCartCount(data.itens?.length || 0);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadCart();
   }, []);
 
   function toggleDepartamento(id) {
@@ -87,8 +110,11 @@ function LayoutUser({ children }) {
 
         <div className="LayoutUser-right">
           <h2 onClick={() => navigate("/UsuarioHome")}>Santana</h2>
-          <div className="cart">
+          <div className="cart" onClick={() => navigate("/carrinho")}>
             <FaShoppingBag />
+            {cartCount > 0 && (
+              <span className="cart-badge">{cartCount}</span>
+            )}
           </div>
           <FaUser className="icon" />
         </div>
