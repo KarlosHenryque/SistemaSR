@@ -160,10 +160,6 @@ function Login() {
             <label htmlFor="lembreMe">Lembre-me</label>
           </div>
 
-          <div className="esqueceuSenha">
-            <a href="#">Esqueceu a senha?</a>
-          </div>
-
         </div>
 
           <button type="submit" disabled={loading}>

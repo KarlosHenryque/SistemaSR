@@ -1,8 +1,8 @@
 import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import LayoutUser from "../../assets/components/LayoutUser";
 import "../../assets/css/usuario/carrinho.css";
-import Swal from "sweetalert2";
 
 function Carrinho() {
   const [itens, setItens] = useState([]);
@@ -81,28 +81,93 @@ function Carrinho() {
 
   async function removerItem(id) {
     try {
-        const res = await fetch(
+      const res = await fetch(
         `http://localhost:3000/carrinho/remover/${id}`,
         {
-            method: "DELETE",
+          method: "DELETE",
         }
-        );
+      );
 
-        if (!res.ok) {
+      if (!res.ok) {
         throw new Error("Erro ao remover item");
-        }
+      }
 
-        Swal.fire("Removido!", "Item removido do carrinho", "success").then(() => {
-            window.location.reload();
-        });
+      Swal.fire("Removido!", "Item removido do carrinho", "success").then(() => {
+        window.location.reload();
+      });
 
-        await carregarCarrinho();
-
-        setSelecionados([]);
+      await carregarCarrinho();
+      setSelecionados([]);
     } catch (error) {
-        Swal.fire("Erro", error.message, "error");
+      Swal.fire("Erro", error.message, "error");
     }
+  }
+
+  async function limparCarrinhoSelecionados() {
+    try {
+      for (const id of selecionados) {
+        await removerItem(id);
+      }
+
+      setSelecionados([]);
+
+      Swal.fire({
+        title: "Sucesso",
+        icon: "success",
+        confirmButtonText: "ok",
+        confirmButtonColor: "#052364",
+      });
+      
+    } catch (error) {
+      Swal.fire("Erro", error.message, "error");
     }
+  }
+
+  function gerarPedido() {
+    const itensSelecionados = itens.filter((item) =>
+      selecionados.includes(item.id)
+    );
+
+    let texto = "🧾 *NOVO PEDIDO* \n\n";
+
+    itensSelecionados.forEach((item) => {
+      texto += `Produto: ${item.nome}\n`;
+      texto += `Preço: R$ ${Number(item.preco).toFixed(2)}\n`;
+      texto += `Quantidade: ${item.quantidade}\n`;
+      texto += `Subtotal: R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+      texto += `------------------------- \n`;
+    });
+
+    const total = calcularTotalSelecionado();
+    texto += `\n💵 *TOTAL: R$ ${total.toFixed(2)}*`;
+
+    return encodeURIComponent(texto);
+  }
+
+  function enviarWhatsApp() {
+    const numero = "5545998377262";
+    const mensagem = gerarPedido();
+
+    window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+
+    setTimeout(() => {
+      Swal.fire({
+        title: "Limpar carrinho?",
+        text: "Deseja remover os itens enviados?",
+        icon: "question",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonText: "Sim",
+        cancelButtonText: "Não",
+        confirmButtonColor: "#052364",
+        cancelButtonColor: "#ff4d4d",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          limparCarrinhoSelecionados();
+        }
+      });
+    }, 500);
+  }
 
   if (loading) {
     return (
@@ -115,19 +180,15 @@ function Carrinho() {
   return (
     <LayoutUser>
       <div className="carrinho-container">
-
         <h2>Meu Carrinho</h2>
 
         {itens.length === 0 ? (
           <p className="carrinho-vazio">Seu carrinho está vazio 🛒</p>
         ) : (
           <div className="carrinho-layout">
-
             <div className="carrinho-itens">
-
               {itens.map((item) => (
                 <div key={item.id} className="carrinho-item">
-
                   <input
                     type="checkbox"
                     className="item-check"
@@ -166,14 +227,11 @@ function Carrinho() {
                   >
                     <FaTrash />
                   </div>
-
                 </div>
               ))}
-
             </div>
 
             <div className="carrinho-resumo">
-
               <h3>Resumo do pedido</h3>
 
               <div className="resumo-linha">
@@ -192,18 +250,31 @@ function Carrinho() {
                 className="btn-finalizar"
                 disabled={selecionados.length === 0}
                 onClick={() => {
-                  Swal.fire(
-                    "Compra iniciada",
-                    `Você selecionou ${selecionados.length} item(s)`,
-                    "success"
-                  );
+                  if (selecionados.length === 0) {
+                    Swal.fire("Atenção", "Selecione itens", "warning");
+                    return;
+                  }
+
+                  Swal.fire({
+                    title: "Confirmar pedido?",
+                    text: `Você selecionou ${selecionados.length} item(s)`,
+                    icon: "question",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: "Enviar para WhatsApp",
+                    cancelButtonText: "Cancelar",
+                    confirmButtonColor: "#052364",
+                    cancelButtonColor: "#ff4d4d",
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      enviarWhatsApp();
+                    }
+                  });
                 }}
               >
                 Finalizar compra
               </button>
-
             </div>
-
           </div>
         )}
       </div>

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../assets/components/LayoutAdmin";
 import "../../assets/css/admin/AdminCadastroUsuarios.css";
 
-/* ================= MODAL EDITAR ================= */
 async function editarCategoriaModal(categoria, departamentos) {
   const options = departamentos
     .map(
@@ -92,7 +91,6 @@ async function editarCategoriaModal(categoria, departamentos) {
   return formValues;
 }
 
-/* ================= MODAL NOVO ================= */
 async function novaCategoriaModal(departamentos) {
   const options = departamentos
     .map((d) => `<option value="${d.id}">${d.nome}</option>`)
@@ -146,7 +144,6 @@ async function novaCategoriaModal(departamentos) {
   return formValues;
 }
 
-/* ================= COMPONENTE ================= */
 function AdminListarCategorias() {
   const [busca, setBusca] = useState("");
   const [categorias, setCategorias] = useState([]);
@@ -157,7 +154,6 @@ function AdminListarCategorias() {
 
   const navigate = useNavigate();
 
-  /* ===== BUSCAR CATEGORIAS ===== */
   async function buscarCategorias(valor = "", status = filtroStatus) {
     try {
       setLoading(true);
@@ -176,7 +172,6 @@ function AdminListarCategorias() {
     }
   }
 
-  /* ===== BUSCAR DEPARTAMENTOS ===== */
   async function buscarDepartamentos() {
     try {
       const response = await fetch("http://localhost:3000/departamentos");
@@ -187,7 +182,6 @@ function AdminListarCategorias() {
     }
   }
 
-  /* ===== EDITAR ===== */
   async function editarCategoria(cat) {
     const formValues = await editarCategoriaModal(cat, departamentos);
     if (!formValues) return;

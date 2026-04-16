@@ -1,4 +1,9 @@
-import { FaBars, FaSearch, FaShoppingBag, FaUser } from "react-icons/fa";
+import {
+  FaBars,
+  FaSearch,
+  FaShoppingBag,
+  FaUser,
+} from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/LayoutUser.css";
@@ -8,8 +13,11 @@ function LayoutUser({ children }) {
   const [menu, setMenu] = useState([]);
   const [cartCount, setCartCount] = useState(0);
   const [departamentoAberto, setDepartamentoAberto] = useState(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const menuRef = useRef(null);
+  const userRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,9 +35,19 @@ function LayoutUser({ children }) {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
         setOpen(false);
         setDepartamentoAberto(null);
+      }
+
+      if (
+        userRef.current &&
+        !userRef.current.contains(event.target)
+      ) {
+        setUserMenuOpen(false);
       }
     }
 
@@ -68,14 +86,23 @@ function LayoutUser({ children }) {
     <>
       <div className="LayoutUser">
         <div className="LayoutUser-left" ref={menuRef}>
-          <FaBars className="icon" onClick={() => setOpen(!open)} />
-          <span onClick={() => setOpen(!open)}>Departamentos</span>
+          <FaBars
+            className="icon"
+            onClick={() => setOpen(!open)}
+          />
+          <span onClick={() => setOpen(!open)}>
+            Departamentos
+          </span>
 
           {open && (
             <div className="dropdown-menu">
               {menu.map((dep) => (
                 <div key={dep.id} className="dropdown-dep">
-                  <strong onClick={() => toggleDepartamento(dep.id)}>
+                  <strong
+                    onClick={() =>
+                      toggleDepartamento(dep.id)
+                    }
+                  >
                     {dep.nome}
                   </strong>
 
@@ -85,7 +112,9 @@ function LayoutUser({ children }) {
                         <div
                           key={cat.id}
                           onClick={() => {
-                            navigate(`/categoria/${cat.id}`);
+                            navigate(
+                              `/categoria/${cat.id}`
+                            );
                             setOpen(false);
                             setDepartamentoAberto(null);
                           }}
@@ -102,21 +131,61 @@ function LayoutUser({ children }) {
         </div>
 
         <div className="LayoutUser-center">
-          <input type="text" placeholder="Buscar produtos" />
+          <input
+            type="text"
+            placeholder="Buscar produtos"
+          />
           <button>
             <FaSearch />
           </button>
         </div>
 
         <div className="LayoutUser-right">
-          <h2 onClick={() => navigate("/UsuarioHome")}>Santana</h2>
-          <div className="cart" onClick={() => navigate("/carrinho")}>
+          <h2
+            onClick={() => navigate("/UsuarioHome")}
+          >
+            Santana
+          </h2>
+
+          <div
+            className="cart"
+            onClick={() => navigate("/carrinho")}
+          >
             <FaShoppingBag />
             {cartCount > 0 && (
-              <span className="cart-badge">{cartCount}</span>
+              <span className="cart-badge">
+                {cartCount}
+              </span>
             )}
           </div>
-          <FaUser className="icon" />
+
+          <div
+            className="user-wrapper"
+            ref={userRef}
+          >
+            <FaUser
+              className="icon"
+              onClick={() =>
+                setUserMenuOpen((prev) => !prev)
+              }
+            />
+
+            {userMenuOpen && (
+              <div className="user-dropdown">
+                <div
+                  className="user-item"
+                  onClick={() => {
+                    localStorage.removeItem(
+                      "usuario_id"
+                    );
+                    navigate("/");
+                  }}
+                >
+                  Sair
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

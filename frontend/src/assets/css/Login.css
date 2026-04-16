@@ -99,19 +99,6 @@ body, html {
   margin-top: 5px;
 }
 
-.esqueceuSenha a{
-  font-size:13px;
-  color:var(--cor-button-hover);
-  text-decoration:none;
-  transition:0.2s;
-  margin-top: 5px;
-}
-
-.esqueceuSenha a:hover{
-  color: var(--cor-principal);
-  text-decoration:underline;
-}
-
 .formulario button[type="submit"] {
   width: 100%;
   padding: 11px;

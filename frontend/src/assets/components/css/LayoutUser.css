@@ -144,3 +144,31 @@
   align-items: center;
   justify-content: center;
 }
+
+.user-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  min-width: 120px;
+  z-index: 999;
+}
+
+.user-item {
+  padding: 10px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+}
+
+.user-item:hover {
+  background: #f2f2f2;
+}
