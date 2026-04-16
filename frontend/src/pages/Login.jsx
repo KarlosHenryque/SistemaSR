@@ -68,6 +68,7 @@ function Login() {
       }
 
       localStorage.setItem("tipo_usuario", dados.usuario.tipo_usuario)
+      localStorage.setItem("usuario_id", dados.usuario.id);
 
       if (lembreMe) {
         localStorage.setItem("email", email)
